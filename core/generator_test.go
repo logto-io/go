@@ -1,14 +1,12 @@
 package core
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestGenerateCodeVerifierShouldGenerateRandomString(t *testing.T) {
 	codeVerifier1 := GenerateCodeVerifier()
 	codeVerifier2 := GenerateCodeVerifier()
-	fmt.Println(codeVerifier1)
 	if codeVerifier1 == codeVerifier2 {
 		t.Fatalf("GenerateCodeVerifier should generate random string")
 	}
