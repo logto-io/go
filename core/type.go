@@ -22,8 +22,8 @@ type RefreshTokenResponse = CodeTokenResponse
 type IdTokenClaims struct {
 	Sub       string   `json:"sub"`
 	Aud       string   `json:"aud"`
-	Exp       int      `json:"exp"`
-	Iat       int      `json:"iat"`
+	Exp       int64    `json:"exp"`
+	Iat       int64    `json:"iat"`
 	Iss       string   `json:"iss"`
 	AtHash    string   `json:"at_hash"`
 	Username  string   `json:"username"`
