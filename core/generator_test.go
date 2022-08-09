@@ -55,3 +55,11 @@ func TestGenerateCodeChallengeShouldGenerateTheSameStringWithTheSameCodeVerifier
 		t.Fatalf("GenerateCodeChallenge should generate the same string with the same code verifier")
 	}
 }
+
+func TestGenerateStateShouldGenerateRandomString(t *testing.T) {
+	state1 := GenerateState()
+	state2 := GenerateState()
+	if state1 == state2 {
+		t.Fatalf("GenerateState should generate random string")
+	}
+}
