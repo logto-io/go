@@ -30,7 +30,7 @@ func TestVerifyIdToken(t *testing.T) {
 		t.Fatalf(generateError.Error())
 	}
 
-	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, &jwks)
 
 	if verifyIdTokenError != nil {
 		t.Fatalf(verifyIdTokenError.Error())
@@ -62,7 +62,7 @@ func TestVerifyIdTokenShouldSupportES512FormatJwks(t *testing.T) {
 		t.Fatalf(generateError.Error())
 	}
 
-	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, &jwks)
 
 	if verifyIdTokenError != nil {
 		t.Fatalf(verifyIdTokenError.Error())
@@ -92,7 +92,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInThePast(t *testing.T) {
 		t.Fatalf(generateError.Error())
 	}
 
-	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
 	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuedInThePast.Error() {
 		t.Fatalf("Expected error when issuedAt is in the past")
@@ -122,7 +122,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInTheFuture(t *testing.T) {
 		t.Fatalf(generateError.Error())
 	}
 
-	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
 	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuedInTheFuture.Error() {
 		t.Fatalf("Expected error when issuedAt is in the future")
@@ -151,7 +151,7 @@ func TestVerifyIdTokenShouldReturnErrorIfExpired(t *testing.T) {
 		t.Fatalf(generateError.Error())
 	}
 
-	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
 	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenExpired.Error() {
 		t.Fatalf("Expected error when expired")
@@ -184,7 +184,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuerIsNotMatched(t *testing.T) {
 
 	anotherIssuer := "issuer.another.io"
 
-	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", anotherIssuer, jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", anotherIssuer, &jwks)
 
 	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuerNotMatch.Error() {
 		t.Fatalf("Expected error when issuer is not matched")
@@ -217,7 +217,7 @@ func TestVerifyIdTokenShouldReturnErrorIfAudienceIsNotMatched(t *testing.T) {
 
 	anotherAudience := "audience.another.io"
 
-	verifyIdTokenError := VerifyIdToken(idToken, anotherAudience, "issuer.logto.io", jwks)
+	verifyIdTokenError := VerifyIdToken(idToken, anotherAudience, "issuer.logto.io", &jwks)
 
 	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenAudienceNotMatch.Error() {
 		t.Fatalf("Expected error when audience is not matched")

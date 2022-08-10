@@ -9,7 +9,7 @@ import (
 
 var ISSUED_AT_RESTRICTIONS int64 = 60 // in seconds
 
-func VerifyIdToken(idToken, clientId, issuer string, jwks jose.JSONWebKeySet) error {
+func VerifyIdToken(idToken, clientId, issuer string, jwks *jose.JSONWebKeySet) error {
 	jws, err := jwt.ParseSigned(idToken)
 	if err != nil {
 		return err
