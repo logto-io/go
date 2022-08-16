@@ -43,6 +43,6 @@ func TestFetchOidcConfig(t *testing.T) {
 	}
 
 	if !cmp.Equal(config, expectedConfig) {
-		t.Fatalf("config did not match expected config")
+		t.Fatalf("config does not match expected result")
 	}
 }
