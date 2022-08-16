@@ -61,5 +61,5 @@ jobs:
             ${{ runner.os }}-go-
       
       - name: Run Unit Tests
-        run: go test logto.io/core
+        run: go test logto.io/core -v
         
