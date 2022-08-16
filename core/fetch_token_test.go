@@ -51,7 +51,7 @@ func TestFetchTokenByAuthorizationCode(t *testing.T) {
 	}
 
 	if !cmp.Equal(token, expectedToken) {
-		t.Fatalf("token did not match expected token")
+		t.Fatalf("token does not match expected result")
 	}
 }
 
@@ -96,6 +96,6 @@ func TestFetchTokenByRefreshToken(t *testing.T) {
 	}
 
 	if !cmp.Equal(token, expectedToken) {
-		t.Fatalf("token did not match expected token")
+		t.Fatalf("token does not match expected result")
 	}
 }
