@@ -22,7 +22,7 @@ jobs:
       - name: Setup golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: ./go/core
+          working-directory: core
           args: --verbose
 
   test:
