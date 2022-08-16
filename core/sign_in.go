@@ -37,7 +37,7 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 
 	scopes := option.Scopes
 	for _, scope := range reservedScopes {
-		scopes = appendScopeIfNotExist(scopes, scope)
+		scopes = appendScopeIfNotExisted(scopes, scope)
 	}
 
 	queries.Add("scope", strings.Join(scopes, " "))
@@ -65,7 +65,7 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 	return uri.String() + "?" + unescapedQueries, nil
 }
 
-func appendScopeIfNotExist(scopes []string, scope string) []string {
+func appendScopeIfNotExisted(scopes []string, scope string) []string {
 	for _, s := range scopes {
 		if s == scope {
 			return scopes

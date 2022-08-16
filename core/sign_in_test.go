@@ -5,7 +5,7 @@ import (
 )
 
 func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=login&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
 
 	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
@@ -15,7 +15,7 @@ func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
 		State:                 "state",
 		Scopes:                []string{"openid", "offline_access", "profile"},
 		Resources:             []string{"resourceA", "resourceB"},
-		Prompt:                "consent",
+		Prompt:                "login",
 	})
 
 	if err != nil {
@@ -94,7 +94,7 @@ func TestGenerateSignInUriShouldGenerateUriWithConsentAsThePromptValue(t *testin
 	}
 }
 
-func TestGenerateSignInUriShouldNotContainsResourcesIfNoResourcesAreProvided(t *testing.T) {
+func TestGenerateSignInUriShouldNotContainResourcesIfNoResourcesAreProvided(t *testing.T) {
 	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&response_type=code&scope=openid offline_access profile&state=state"
 
 	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
