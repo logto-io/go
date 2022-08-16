@@ -1,0 +1,64 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Go Env
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19'
+      
+      - name: Checkout Repository 
+        uses: actions/checkout@v3
+      
+      - name: Setup golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --verbose
+
+  test:
+    needs: lint
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        include:
+          - os: ubuntu-latest
+            go-build: ~/.cache/go-build
+          - os: macos-latest
+            go-build: ~/Library/Caches/go-build
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Go Env
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19'
+      
+      - name: Setup Caches
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ matrix.go-build }}
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      
+      - name: Run Unit Tests
+        run: go test logto.io/core
+        
