@@ -2,7 +2,10 @@ module logto.io/core
 
 go 1.19
 
-require gopkg.in/square/go-jose.v2 v2.6.0
+require (
+	github.com/jarcoal/httpmock v1.2.0
+	gopkg.in/square/go-jose.v2 v2.6.0
+)
 
 require github.com/stretchr/testify v1.8.0 // indirect
 
