@@ -35,6 +35,7 @@ func TestFetchTokenByAuthorizationCode(t *testing.T) {
 		CodeVerifier:  "codeVerifier",
 		ClientId:      "clientId",
 		RedirectUri:   "redirectUri",
+		Resource:      "resource",
 	}
 
 	token, fetchError := FetchTokenByAuthorizationCode(client, options)
