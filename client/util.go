@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+
+	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 func GetOriginRequestUrl(request *http.Request) string {
@@ -41,6 +43,24 @@ func createHttpClient(logtoConfig *LogtoConfig) *http.Client {
 func buildAccessTokenKey(scopes []string, resource string) string {
 	sort.Strings(scopes)
 	scopesPart := strings.Join(scopes, " ")
-
 	return scopesPart + "@" + resource
+}
+
+func getResourceFromAccessToken(accessToken string) string {
+	jwtObject, parseToJwtErr := jwt.ParseSigned(accessToken)
+	if parseToJwtErr != nil {
+		return ""
+	}
+
+	type audContainedClaims struct {
+		Aud string `json:"aud"`
+	}
+
+	var audClaim audContainedClaims
+	claimsErr := jwtObject.UnsafeClaimsWithoutVerification(&audClaim)
+	if claimsErr != nil {
+		return ""
+	}
+
+	return audClaim.Aud
 }

@@ -3,6 +3,7 @@ package core
 import (
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type FetchTokenByAuthorizationCodeOptions struct {
@@ -46,29 +47,29 @@ func FetchTokenByAuthorizationCode(client *http.Client, options *FetchTokenByAut
 }
 
 type FetchTokenByRefreshTokenOptions struct {
-	tokenEndpoint string
-	clientId      string
-	refreshToken  string
-	resource      string
-	scope         string
+	TokenEndpoint string
+	ClientId      string
+	RefreshToken  string
+	Resource      string
+	Scopes        []string
 }
 
 func FetchTokenByRefreshToken(client *http.Client, options *FetchTokenByRefreshTokenOptions) (RefreshTokenResponse, error) {
 	values := url.Values{
-		"client_id":     {options.clientId},
-		"refresh_token": {options.refreshToken},
+		"client_id":     {options.ClientId},
+		"refresh_token": {options.RefreshToken},
 		"grant_type":    {"refresh_token"},
 	}
 
-	if options.resource != "" {
-		values.Add("resource", options.resource)
+	if options.Resource != "" {
+		values.Add("resource", options.Resource)
 	}
 
-	if options.scope != "" {
-		values.Add("scope", options.scope)
+	if len(options.Scopes) > 0 {
+		values.Add("scope", strings.Join(options.Scopes, " "))
 	}
 
-	response, requestErr := client.PostForm(options.tokenEndpoint, values)
+	response, requestErr := client.PostForm(options.TokenEndpoint, values)
 
 	if requestErr != nil {
 		return RefreshTokenResponse{}, requestErr

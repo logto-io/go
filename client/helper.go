@@ -65,3 +65,36 @@ func (logtoClient *LogtoClient) createRemoteJwks(jwksUri string) (*jose.JSONWebK
 
 	return &jwks, nil
 }
+
+func (logtoClient *LogtoClient) verifyAndSaveTokenResponse(
+	idToken string,
+	refreshToken string,
+	accessToken AccessToken,
+	oidcConfig *core.OidcConfigResponse,
+) error {
+	if idToken != "" {
+		jwks, createJwksErr := logtoClient.createRemoteJwks(oidcConfig.JwksUri)
+		if createJwksErr != nil {
+			return createJwksErr
+		}
+
+		verificationErr := core.VerifyIdToken(idToken, logtoClient.logtoConfig.AppId, oidcConfig.Issuer, jwks)
+		if verificationErr != nil {
+			return verificationErr
+		}
+
+		logtoClient.SetIdToken(idToken)
+	}
+
+	logtoClient.SetRefreshToken(refreshToken)
+
+	// Note
+	// - Treat `scopes` as `empty` to construct the default access token key
+	// for we do not support custom scopes in V1
+	resource := getResourceFromAccessToken(accessToken.Token)
+	accessTokenKey := buildAccessTokenKey([]string{}, resource)
+
+	logtoClient.SaveAccessToken(accessTokenKey, accessToken)
+
+	return nil
+}

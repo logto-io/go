@@ -3,6 +3,7 @@ module logto.io/client
 go 1.19
 
 require (
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
 	gopkg.in/square/go-jose.v2 v2.6.0
 	logto.io/core v0.0.0-00010101000000-000000000000
 )
