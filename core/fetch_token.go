@@ -6,28 +6,28 @@ import (
 )
 
 type FetchTokenByAuthorizationCodeOptions struct {
-	tokenEndpoint string
-	code          string
-	codeVerifier  string
-	clientId      string
-	redirectUri   string
-	resource      string
+	TokenEndpoint string
+	Code          string
+	CodeVerifier  string
+	ClientId      string
+	RedirectUri   string
+	Resource      string
 }
 
 func FetchTokenByAuthorizationCode(client *http.Client, options *FetchTokenByAuthorizationCodeOptions) (CodeTokenResponse, error) {
 	values := url.Values{
-		"client_id":     {options.clientId},
-		"redirect_uri":  {options.redirectUri},
-		"code_verifier": {options.codeVerifier},
-		"code":          {options.code},
+		"client_id":     {options.ClientId},
+		"redirect_uri":  {options.RedirectUri},
+		"code_verifier": {options.CodeVerifier},
+		"code":          {options.Code},
 		"grant_type":    {"authorization_code"},
 	}
 
-	if options.resource != "" {
-		values.Add("resource", options.resource)
+	if options.Resource != "" {
+		values.Add("resource", options.Resource)
 	}
 
-	response, requestErr := client.PostForm(options.tokenEndpoint, values)
+	response, requestErr := client.PostForm(options.TokenEndpoint, values)
 
 	if requestErr != nil {
 		return CodeTokenResponse{}, requestErr

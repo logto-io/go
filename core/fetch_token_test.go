@@ -30,12 +30,12 @@ func TestFetchTokenByAuthorizationCode(t *testing.T) {
 
 	client := &http.Client{}
 	options := &FetchTokenByAuthorizationCodeOptions{
-		tokenEndpoint: tokenEndpoint,
-		code:          "code",
-		codeVerifier:  "codeVerifier",
-		clientId:      "clientId",
-		redirectUri:   "redirectUri",
-		resource:      "resource",
+		TokenEndpoint: tokenEndpoint,
+		Code:          "code",
+		CodeVerifier:  "codeVerifier",
+		ClientId:      "clientId",
+		RedirectUri:   "redirectUri",
+		Resource:      "resource",
 	}
 
 	token, fetchError := FetchTokenByAuthorizationCode(client, options)
