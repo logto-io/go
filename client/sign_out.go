@@ -26,7 +26,7 @@ func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, e
 	}
 
 	if refreshToken != "" {
-		core.Revoke(logtoClient.httpClient, &core.RevocationOptions{
+		_ = core.Revoke(logtoClient.httpClient, &core.RevocationOptions{
 			RevocationEndpoint: oidcConfig.RevocationEndpoint,
 			ClientId:           logtoClient.logtoConfig.AppId,
 			Token:              refreshToken,

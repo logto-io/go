@@ -26,7 +26,7 @@ func Revoke(client *http.Client, options *RevocationOptions) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", response.StatusCode)
+		return fmt.Errorf("revocation error, status code: %d", response.StatusCode)
 	}
 
 	return nil
