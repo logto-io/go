@@ -24,7 +24,7 @@ type AccessToken struct {
 type LogtoClient struct {
 	httpClient     *http.Client
 	logtoConfig    *LogtoConfig
-	sessionStorage Storage
+	storage        Storage
 	accessTokenMap map[string]AccessToken
 }
 
@@ -32,7 +32,7 @@ func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 	logtoClient := LogtoClient{
 		httpClient:     createHttpClient(config),
 		logtoConfig:    config,
-		sessionStorage: storage,
+		storage:        storage,
 		accessTokenMap: make(map[string]AccessToken),
 	}
 
@@ -44,19 +44,19 @@ func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 }
 
 func (logtoClient *LogtoClient) GetRefreshToken() string {
-	return logtoClient.sessionStorage.GetItem("logto_refresh_token")
+	return logtoClient.storage.GetItem("logto_refresh_token")
 }
 
 func (logtoClient *LogtoClient) SetRefreshToken(refreshToken string) {
-	logtoClient.sessionStorage.SetItem("logto_refresh_token", refreshToken)
+	logtoClient.storage.SetItem("logto_refresh_token", refreshToken)
 }
 
 func (LogtoClient *LogtoClient) GetIdToken() string {
-	return LogtoClient.sessionStorage.GetItem("logto_id_token")
+	return LogtoClient.storage.GetItem("logto_id_token")
 }
 
 func (logtoClient *LogtoClient) SetIdToken(idToken string) {
-	logtoClient.sessionStorage.SetItem("logto_id_token", idToken)
+	logtoClient.storage.SetItem("logto_id_token", idToken)
 }
 
 func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessToken) {

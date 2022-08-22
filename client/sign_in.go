@@ -51,7 +51,7 @@ func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
 		return "", marshalErr
 	}
 
-	logtoClient.sessionStorage.SetItem("logto_sign_in_context", string(signInContextJsonValue))
+	logtoClient.storage.SetItem("logto_sign_in_context", string(signInContextJsonValue))
 
 	return signInUri, nil
 }

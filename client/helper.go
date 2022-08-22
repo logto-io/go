@@ -18,7 +18,7 @@ func (logtoClient *LogtoClient) fetchOidcConfig() (core.OidcConfigResponse, erro
 
 func (logtoClient *LogtoClient) loadAccessTokenMap() {
 	accessTokenMap := make(map[string]AccessToken)
-	accessTokenMapJsonString := logtoClient.sessionStorage.GetItem("logto_access_token_map")
+	accessTokenMapJsonString := logtoClient.storage.GetItem("logto_access_token_map")
 	if accessTokenMapJsonString == "" {
 		return
 	}
@@ -36,7 +36,7 @@ func (logtoClient *LogtoClient) persistAccessTokenMap() {
 	if err != nil {
 		return
 	}
-	logtoClient.sessionStorage.SetItem("logto_access_token_map", string(accessTokenMapJsonString))
+	logtoClient.storage.SetItem("logto_access_token_map", string(accessTokenMapJsonString))
 }
 
 func (logtoClient *LogtoClient) createRemoteJwks(jwksUri string) (*jose.JSONWebKeySet, error) {

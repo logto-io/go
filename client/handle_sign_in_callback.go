@@ -9,7 +9,7 @@ import (
 
 func (logtoClient *LogtoClient) HandleSignInCallback(callbackUri string) (core.CodeTokenResponse, error) {
 	signInContext := SignInContext{}
-	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.sessionStorage.GetItem("logto_sign_in_context")), &signInContext)
+	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.storage.GetItem("logto_sign_in_context")), &signInContext)
 
 	if parseSignInContextErr != nil {
 		return core.CodeTokenResponse{}, parseSignInContextErr
@@ -49,7 +49,7 @@ func (logtoClient *LogtoClient) HandleSignInCallback(callbackUri string) (core.C
 		return core.CodeTokenResponse{}, verificationErr
 	}
 
-	logtoClient.sessionStorage.SetItem("logto_sign_in_context", "")
+	logtoClient.storage.SetItem("logto_sign_in_context", "")
 
 	logtoClient.SetRefreshToken(codeTokenResponse.RefreshToken)
 	logtoClient.SetIdToken(codeTokenResponse.IdToken)
