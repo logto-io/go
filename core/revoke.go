@@ -7,17 +7,17 @@ import (
 )
 
 type RevocationOptions struct {
-	revocationEndpoint string
-	clientId           string
-	token              string
+	RevocationEndpoint string
+	ClientId           string
+	Token              string
 }
 
 func Revoke(client *http.Client, options *RevocationOptions) error {
 	values := url.Values{
-		"client_id": {options.clientId},
-		"token":     {options.token},
+		"client_id": {options.ClientId},
+		"token":     {options.Token},
 	}
-	response, fetchErr := client.PostForm(options.revocationEndpoint, values)
+	response, fetchErr := client.PostForm(options.RevocationEndpoint, values)
 
 	if fetchErr != nil {
 		return fetchErr
