@@ -24,11 +24,11 @@ type AccessToken struct {
 type LogtoClient struct {
 	httpClient     *http.Client
 	logtoConfig    *LogtoConfig
-	sessionStorage SessionStorage
+	sessionStorage Storage
 	accessTokenMap map[string]AccessToken
 }
 
-func NewLogtoClient(config *LogtoConfig, storage SessionStorage) *LogtoClient {
+func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 	logtoClient := LogtoClient{
 		httpClient:     createHttpClient(config),
 		logtoConfig:    config,
