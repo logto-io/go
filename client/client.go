@@ -1,7 +1,13 @@
 package client
 
 import (
+	"errors"
 	"net/http"
+	"time"
+
+	"golang.org/x/exp/slices"
+
+	"logto.io/core"
 )
 
 type LogtoConfig struct {
@@ -16,9 +22,9 @@ type LogtoConfig struct {
 }
 
 type AccessToken struct {
-	token     string
-	scope     string
-	expiresAt int64
+	Token     string `json:"token"`
+	Scope     string `json:"scope"`
+	ExpiresAt int64  `json:"expiresAt"`
 }
 
 type LogtoClient struct {
@@ -43,6 +49,10 @@ func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 	return &logtoClient
 }
 
+func (logtoClient *LogtoClient) IsAuthenticated() bool {
+	return logtoClient.GetIdToken() != ""
+}
+
 func (logtoClient *LogtoClient) GetRefreshToken() string {
 	return logtoClient.storage.GetItem("logto_refresh_token")
 }
@@ -59,6 +69,10 @@ func (logtoClient *LogtoClient) SetIdToken(idToken string) {
 	logtoClient.storage.SetItem("logto_id_token", idToken)
 }
 
+func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {
+	return core.DecodeIdToken(logtoClient.GetIdToken())
+}
+
 func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessToken) {
 	logtoClient.accessTokenMap[key] = accessToken
 	if logtoClient.logtoConfig.PersistAccessToken {
@@ -66,6 +80,66 @@ func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessTo
 	}
 }
 
-func (logtoClient *LogtoClient) GetAccessToken(key string) AccessToken {
-	return logtoClient.accessTokenMap[key]
+func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, error) {
+	if !logtoClient.IsAuthenticated() {
+		return AccessToken{}, errors.New("not authenticated")
+	}
+
+	if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
+		return AccessToken{}, errors.New("unacknowledged resource found")
+	}
+
+	accessTokenKey := buildAccessTokenKey([]string{}, resource)
+	if accessToken, ok := logtoClient.accessTokenMap[accessTokenKey]; ok {
+		if accessToken.ExpiresAt > time.Now().Unix() {
+			return accessToken, nil
+		}
+	}
+
+	refreshToken := logtoClient.GetRefreshToken()
+
+	if refreshToken == "" {
+		return AccessToken{}, errors.New("not authenticated")
+	}
+
+	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
+
+	if fetchOidcConfigErr != nil {
+		return AccessToken{}, fetchOidcConfigErr
+	}
+
+	var scopes []string
+	if resource != "" {
+		scopes = append(scopes, "offline_access")
+	}
+
+	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshToken(logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
+		TokenEndpoint: oidcConfig.TokenEndpoint,
+		ClientId:      logtoClient.logtoConfig.AppId,
+		RefreshToken:  refreshToken,
+		Scopes:        scopes,
+	})
+
+	if refreshTokenErr != nil {
+		return AccessToken{}, refreshTokenErr
+	}
+
+	refreshedAccessToken := AccessToken{
+		Token:     refreshedToken.AccessToken,
+		Scope:     refreshedToken.Scope,
+		ExpiresAt: time.Now().Unix() + int64(refreshedToken.ExpireIn),
+	}
+
+	verificationErr := logtoClient.verifyAndSaveTokenResponse(
+		refreshedToken.IdToken,
+		refreshedToken.RefreshToken,
+		refreshedAccessToken,
+		&oidcConfig,
+	)
+
+	if verificationErr != nil {
+		return AccessToken{}, verificationErr
+	}
+
+	return refreshedAccessToken, nil
 }

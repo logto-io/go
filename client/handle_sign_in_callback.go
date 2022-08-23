@@ -2,28 +2,30 @@ package client
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"logto.io/core"
 )
 
-func (logtoClient *LogtoClient) HandleSignInCallback(callbackUri string) (core.CodeTokenResponse, error) {
+func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) error {
 	signInContext := SignInContext{}
 	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.storage.GetItem("logto_sign_in_context")), &signInContext)
 
 	if parseSignInContextErr != nil {
-		return core.CodeTokenResponse{}, parseSignInContextErr
+		return parseSignInContextErr
 	}
 
+	callbackUri := GetOriginRequestUrl(request)
 	code, retrieveCodeErr := core.VerifyAndParseCodeFromCallbackUri(callbackUri, signInContext.RedirectUri, signInContext.State)
 	if retrieveCodeErr != nil {
-		return core.CodeTokenResponse{}, retrieveCodeErr
+		return retrieveCodeErr
 	}
 
 	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
 
 	if fetchOidcConfigErr != nil {
-		return core.CodeTokenResponse{}, fetchOidcConfigErr
+		return fetchOidcConfigErr
 	}
 
 	codeTokenResponse, fetchTokenErr := core.FetchTokenByAuthorizationCode(logtoClient.httpClient, &core.FetchTokenByAuthorizationCodeOptions{
@@ -35,33 +37,27 @@ func (logtoClient *LogtoClient) HandleSignInCallback(callbackUri string) (core.C
 	})
 
 	if fetchTokenErr != nil {
-		return core.CodeTokenResponse{}, fetchTokenErr
-	}
-
-	jwks, createJwksErr := logtoClient.createRemoteJwks(oidcConfig.JwksUri)
-	if createJwksErr != nil {
-		return core.CodeTokenResponse{}, createJwksErr
-	}
-
-	verificationErr := core.VerifyIdToken(codeTokenResponse.IdToken, logtoClient.logtoConfig.AppId, oidcConfig.Issuer, jwks)
-
-	if verificationErr != nil {
-		return core.CodeTokenResponse{}, verificationErr
+		return fetchTokenErr
 	}
 
 	logtoClient.storage.SetItem("logto_sign_in_context", "")
 
-	logtoClient.SetRefreshToken(codeTokenResponse.RefreshToken)
-	logtoClient.SetIdToken(codeTokenResponse.IdToken)
+	accessToken := AccessToken{
+		Token:     codeTokenResponse.AccessToken,
+		Scope:     codeTokenResponse.Scope,
+		ExpiresAt: time.Now().Unix() + int64(codeTokenResponse.ExpireIn),
+	}
 
-	// TODO: extract resource from access token (audience)
-	accessTokenKey := buildAccessTokenKey([]string{}, "")
+	verificationErr := logtoClient.verifyAndSaveTokenResponse(
+		codeTokenResponse.IdToken,
+		codeTokenResponse.RefreshToken,
+		accessToken,
+		&oidcConfig,
+	)
 
-	logtoClient.SaveAccessToken(accessTokenKey, AccessToken{
-		token:     codeTokenResponse.AccessToken,
-		scope:     codeTokenResponse.Scope,
-		expiresAt: time.Now().Unix() + int64(codeTokenResponse.ExpireIn),
-	})
+	if verificationErr != nil {
+		return verificationErr
+	}
 
-	return codeTokenResponse, nil
+	return nil
 }

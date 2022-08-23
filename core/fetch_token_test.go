@@ -76,11 +76,11 @@ func TestFetchTokenByRefreshToken(t *testing.T) {
 
 	client := &http.Client{}
 	options := &FetchTokenByRefreshTokenOptions{
-		tokenEndpoint: tokenEndpoint,
-		clientId:      "clientId",
-		refreshToken:  "refresh_token",
-		resource:      "resource",
-		scope:         "openid offline_access",
+		TokenEndpoint: tokenEndpoint,
+		ClientId:      "clientId",
+		RefreshToken:  "refresh_token",
+		Resource:      "resource",
+		Scopes:        []string{"openid", "offline_access"},
 	}
 
 	token, fetchError := FetchTokenByRefreshToken(client, options)
