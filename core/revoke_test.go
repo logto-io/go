@@ -22,9 +22,9 @@ func TestRevoke(t *testing.T) {
 
 	client := &http.Client{}
 	options := &RevocationOptions{
-		revocationEndpoint: revocationEndpoint,
-		clientId:           "clientId",
-		token:              "token",
+		RevocationEndpoint: revocationEndpoint,
+		ClientId:           "clientId",
+		Token:              "token",
 	}
 
 	err := Revoke(client, options)
