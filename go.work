@@ -5,3 +5,5 @@ use (
 	./core
 	./gin-sample
 )
+
+replace github.com/logto-io/go/core v0.1.0 => ./core
