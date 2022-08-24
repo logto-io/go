@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  add-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Module Version
+        run: |
+          GO_MODULE_VERSION=$(git describe HEAD --tags --abbrev=0)
+          echo "GO_MODULE_VERSION=$GO_MODULE_VERSION" >> $GITHUB_ENV
+
+      # https://pkg.go.dev/about#adding-a-package
+      - name: Request proxy.golang.org to update go module index
+        env:
+          MODULE_NAME: github.com/logto-io/go
+          MODULE_VERSION: ${{ env.GO_MODULE_VERSION }}
+        run: |
+          curl "https://proxy.golang.org/$MODULE_NAME/@v/$MODULE_VERSION.info"

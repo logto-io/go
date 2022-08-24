@@ -1,0 +1,19 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  create-github-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.BOT_PAT }}
