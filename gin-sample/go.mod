@@ -1,4 +1,4 @@
-module logto.io/gin-sample
+module github.com/logto-io/go/gin-sample
 
 go 1.19
 
