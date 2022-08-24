@@ -6,4 +6,7 @@ use (
 	./gin-sample
 )
 
-replace github.com/logto-io/go/core v0.1.0 => ./core
+replace (
+	github.com/logto-io/go/client v0.1.0 => ./client
+	github.com/logto-io/go/core v0.1.0 => ./core
+)
