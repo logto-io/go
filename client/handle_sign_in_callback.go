@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"logto.io/core"
+	"github.com/logto-io/go/core"
 )
 
 func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) error {

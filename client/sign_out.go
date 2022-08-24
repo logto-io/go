@@ -3,7 +3,7 @@ package client
 import (
 	"errors"
 
-	"logto.io/core"
+	"github.com/logto-io/go/core"
 )
 
 func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, error) {

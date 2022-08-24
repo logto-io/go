@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 
-	"logto.io/core"
+	"github.com/logto-io/go/core"
 )
 
 type SignInContext struct {
