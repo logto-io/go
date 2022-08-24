@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/exp/slices"
 
-	"logto.io/core"
+	"github.com/logto-io/go/core"
 )
 
 type LogtoConfig struct {

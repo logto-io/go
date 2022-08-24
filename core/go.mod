@@ -1,4 +1,4 @@
-module logto.io/core
+module github.com/logto-io/go/core
 
 go 1.19
 

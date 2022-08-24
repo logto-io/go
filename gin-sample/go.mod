@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.8.1
-	logto.io/client v0.0.0-00010101000000-000000000000
+	github.com/logto-io/go/client v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -33,10 +33,10 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	logto.io/core v0.0.0-00010101000000-000000000000 // indirect
+	github.com/logto-io/go/core v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace (
-	logto.io/client => ../client
-	logto.io/core => ../core
+	github.com/logto-io/go/client => ../client
+	github.com/logto-io/go/core => ../core
 )
