@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  create-github-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.BOT_PAT }}
+  
+  update-go-module-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://pkg.go.dev/about#adding-a-package
+      - name: Request proxy.golang.org to update go module index
+        env:
+          MODULE_NAME: github.com/logto-io/go
+        run: |
+          curl "https://proxy.golang.org/$MODULE_NAME/@v/${GITHUB_REF#refs/*/}.info"
