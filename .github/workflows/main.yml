@@ -27,19 +27,7 @@ jobs:
 
   test:
     needs: lint
-
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-        include:
-          - os: ubuntu-latest
-            go-build: ~/.cache/go-build
-          - os: macos-latest
-            go-build: ~/Library/Caches/go-build
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -54,12 +42,19 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ${{ matrix.go-build }}
+            ~/.cache/go-build
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
       
-      - name: Run Unit Tests
-        run: go test github.com/logto-io/go/core -v
-        
+      - name: Run Core Unit Tests And Generate Coverage Report
+        run: |
+          mkdir -p ./build/core/test
+          go test github.com/logto-io/go/core -coverprofile=./build/core/test/coverage.out -covermode=atomic
+      
+      - name: Upload Core Coverage Report
+        uses: codecov/codecov-action@v3
+        with:
+          flags: core
+          file: ./build/core/test/coverage.out
