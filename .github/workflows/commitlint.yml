@@ -25,10 +25,23 @@ jobs:
         with:
           node-version: 16
       
-      - name: Setup development repo
+      - name: Install commitlint tools
         run: |
           npm install -g @commitlint/config-conventional @commitlint/cli
           npm link @commitlint/config-conventional
+      
+      - name: Create commitlint config file
+        run: |
+          cat <<EEE > commitlint.config.js
+          const { rules } = require('@commitlint/config-conventional');
+          module.exports = {
+            extends: ['@commitlint/config-conventional'],
+            rules: {
+              'type-enum': [2, 'always', [...rules['type-enum'][2], 'release']],
+              'scope-enum': [2, 'always', ['core', 'client', 'gin-sample', 'deps']],
+            },
+          };
+          EEE
 
       - name: Commitlint
         run: npx commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD
