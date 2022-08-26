@@ -1,0 +1,2 @@
+--subject-regex=^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\((core|client|gin-sample|deps)\))?: [^A-Z].*[^.]$
+--subject-maxlen=100
