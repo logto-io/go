@@ -1,3 +1,4 @@
+// Note: Github actions use this config file to lint commit messages
 const { rules } = require('@commitlint/config-conventional');
 
 module.exports = {
