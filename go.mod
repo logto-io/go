@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/go-cmp v0.5.8
 	github.com/jarcoal/httpmock v1.2.0
-	golang.org/x/exp v0.0.0-20220823124025-807a23277127
+	golang.org/x/exp v0.0.0-20220827204233-334a2380cb91
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
