@@ -40,7 +40,7 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 		return fetchTokenErr
 	}
 
-	logtoClient.storage.SetItem("logto_sign_in_context", "")
+	logtoClient.storage.SetItem(StorageKeySignInContext, "")
 
 	accessToken := AccessToken{
 		Token:     codeTokenResponse.AccessToken,
