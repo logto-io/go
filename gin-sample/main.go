@@ -30,7 +30,7 @@ func main() {
 
 	router.GET("/", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
 		authState := "You are not logged in to this website. :("
 
@@ -50,7 +50,7 @@ func main() {
 
 	router.GET("/sign-in", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 		signInUri, err := logtoClient.SignIn("http://localhost:8080/sign-in-callback")
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, err.Error())
@@ -61,7 +61,7 @@ func main() {
 
 	router.GET("/sign-in-callback", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
 		err := logtoClient.HandleSignInCallback(ctx.Request)
 		if err != nil {
@@ -74,7 +74,7 @@ func main() {
 
 	router.GET("/user", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
 		idTokenClaims, err := logtoClient.GetIdTokenClaims()
 
@@ -87,7 +87,7 @@ func main() {
 
 	router.GET("/sign-out", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
 		signOutUri, signOutErr := logtoClient.SignOut("http://localhost:8080")
 
@@ -101,7 +101,7 @@ func main() {
 
 	router.GET("/protected", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &Storage{session: session})
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
 		if logtoClient.IsAuthenticated() {
 			protectedPage := `
