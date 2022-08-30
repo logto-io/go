@@ -54,19 +54,19 @@ func (logtoClient *LogtoClient) IsAuthenticated() bool {
 }
 
 func (logtoClient *LogtoClient) GetRefreshToken() string {
-	return logtoClient.storage.GetItem("logto_refresh_token")
+	return logtoClient.storage.GetItem(StorageKeyRefreshToken)
 }
 
 func (logtoClient *LogtoClient) SetRefreshToken(refreshToken string) {
-	logtoClient.storage.SetItem("logto_refresh_token", refreshToken)
+	logtoClient.storage.SetItem(StorageKeyRefreshToken, refreshToken)
 }
 
 func (LogtoClient *LogtoClient) GetIdToken() string {
-	return LogtoClient.storage.GetItem("logto_id_token")
+	return LogtoClient.storage.GetItem(StorageKeyIdToken)
 }
 
 func (logtoClient *LogtoClient) SetIdToken(idToken string) {
-	logtoClient.storage.SetItem("logto_id_token", idToken)
+	logtoClient.storage.SetItem(StorageKeyIdToken, idToken)
 }
 
 func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {

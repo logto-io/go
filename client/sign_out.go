@@ -15,9 +15,9 @@ func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, e
 	refreshToken := logtoClient.GetRefreshToken()
 
 	logtoClient.accessTokenMap = make(map[string]AccessToken)
-	logtoClient.storage.SetItem("logto_access_token_map", "")
-	logtoClient.storage.SetItem("logto_refresh_token", "")
-	logtoClient.storage.SetItem("logto_id_token", "")
+	logtoClient.storage.SetItem(StorageKeyAccessTokenMap, "")
+	logtoClient.storage.SetItem(StorageKeyRefreshToken, "")
+	logtoClient.storage.SetItem(StorageKeyIdToken, "")
 
 	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
 
