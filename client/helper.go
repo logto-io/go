@@ -36,7 +36,7 @@ func (logtoClient *LogtoClient) persistAccessTokenMap() {
 	if err != nil {
 		return
 	}
-	logtoClient.storage.SetItem("logto_access_token_map", string(accessTokenMapJsonString))
+	logtoClient.storage.SetItem(StorageKeyAccessTokenMap, string(accessTokenMapJsonString))
 }
 
 func (logtoClient *LogtoClient) createRemoteJwks(jwksUri string) (*jose.JSONWebKeySet, error) {
