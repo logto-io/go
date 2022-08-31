@@ -44,7 +44,7 @@ func (storage *TestStorage) SetItem(key, value string) {
 	storage.data[key] = value
 }
 
-func TestFetchOidcConfig(t *testing.T) {
+func TestFetchOidcConfigShouldReturnExpectedOidcConfig(t *testing.T) {
 	wantedOidcConfig := core.OidcConfigResponse{
 		AuthorizationEndpoint: "testAuthorizationEndpoint",
 	}
@@ -69,7 +69,7 @@ func TestFetchOidcConfig(t *testing.T) {
 	}
 }
 
-func TestLoadAccessTokenMap(t *testing.T) {
+func TestLoadAccessTokenMapShouldLoadAccessTokenMapFromStorage(t *testing.T) {
 	expiresAt := time.Now().Unix() + 60
 
 	logtoConfig := &LogtoConfig{
@@ -100,7 +100,7 @@ func TestLoadAccessTokenMap(t *testing.T) {
 	}
 }
 
-func TestPersistAccessTokenMap(t *testing.T) {
+func TestPersistAccessTokenMapShouldSaveAccessTokenMapDataToStorage(t *testing.T) {
 	logtoConfig := &LogtoConfig{}
 	testStorage := &TestStorage{
 		data: make(map[string]string),
@@ -125,7 +125,7 @@ func TestPersistAccessTokenMap(t *testing.T) {
 	}
 }
 
-func TestCreateRemoteJwks(t *testing.T) {
+func TestCreateRemoteJwksShouldCreateExpectedJwks(t *testing.T) {
 
 	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
 
@@ -157,7 +157,7 @@ func TestCreateRemoteJwks(t *testing.T) {
 	}
 }
 
-func TestVerifyAndSaveTokenResponse(t *testing.T) {
+func TestVerifyAndSaveTokenResponseShouldSaveToken(t *testing.T) {
 	var logtoClientSpy *LogtoClient
 	patchesForCreateRemoteJwks := gomonkey.ApplyPrivateMethod(logtoClientSpy, "createRemoteJwks", func(_ *LogtoClient) (*jose.JSONWebKeySet, error) {
 		return &jose.JSONWebKeySet{}, nil
