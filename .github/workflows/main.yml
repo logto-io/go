@@ -15,10 +15,10 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '^1.19'
-      
+
       - name: Checkout Repository 
         uses: actions/checkout@v3
-      
+
       - name: Setup golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '^1.19'
-      
+
       - name: Setup Caches
         uses: actions/cache@v3
         with:
@@ -47,14 +47,25 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      
+
       - name: Run Core Unit Tests And Generate Coverage Report
         run: |
           mkdir -p ./build/core/test
           go test github.com/logto-io/go/core -coverprofile=./build/core/test/coverage.out -covermode=atomic
-      
+
+      - name: Run Client Unit Tests And Generate Coverage Report
+        run: |
+          mkdir -p ./build/client/test
+          go test github.com/logto-io/go/client -coverprofile=./build/client/test/coverage.out -covermode=atomic
+
       - name: Upload Core Coverage Report
         uses: codecov/codecov-action@v3
         with:
           flags: core
           file: ./build/core/test/coverage.out
+
+      - name: Upload Client Coverage Report
+        uses: codecov/codecov-action@v3
+        with:
+          flags: client
+          file: ./build/client/test/coverage.out
