@@ -1,15 +1,13 @@
 package client
 
 import (
-	"errors"
-
 	"github.com/logto-io/go/core"
 )
 
 func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, error) {
 	idToken := logtoClient.GetIdToken()
 	if idToken == "" {
-		return "", errors.New("not authenticated")
+		return "", ErrNotAuthenticated
 	}
 
 	refreshToken := logtoClient.GetRefreshToken()
