@@ -10,7 +10,7 @@ import (
 
 func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) error {
 	signInContext := SignInContext{}
-	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.storage.GetItem("logto_sign_in_context")), &signInContext)
+	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.storage.GetItem(StorageKeySignInContext)), &signInContext)
 
 	if parseSignInContextErr != nil {
 		return parseSignInContextErr
