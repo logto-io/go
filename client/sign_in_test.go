@@ -14,17 +14,39 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 	testAppSecret := "appSecret"
 	testAuthEndpoint := "https://example.com/auth"
 	testRedirectUri := "https://myapp.com/sign-in-callback"
+	testState := "testState"
+	testCodeVerifier := "testCodeVerifier"
+	testCodeChallenge := "testCodeChallenge"
+
+	patchesForGenerateState := gomonkey.ApplyFunc(core.GenerateState, func() string {
+		return testState
+	})
+	defer patchesForGenerateState.Reset()
+
+	patchesForGenerateCodeVerifier := gomonkey.ApplyFunc(core.GenerateCodeVerifier, func() string {
+		return testCodeVerifier
+	})
+	defer patchesForGenerateCodeVerifier.Reset()
+
+	patchesForGenerateCodeChallenge := gomonkey.ApplyFunc(core.GenerateCodeChallenge, func(codeVerifier string) string {
+		return testCodeChallenge
+	})
+	defer patchesForGenerateCodeChallenge.Reset()
+
+	patchesForGenerateSignInUri := gomonkey.ApplyFunc(core.GenerateSignInUri, func(option *core.SignInUriGenerationOptions) (string, error) {
+		return testAuthEndpoint + "?redirect_uri=" + testRedirectUri + "&state=" + testState + "&code_challenge=" + testCodeChallenge, nil
+	})
+	defer patchesForGenerateSignInUri.Reset()
 
 	var logtoClientSpy *LogtoClient
 
-	patches := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
 		oidcConfig := core.OidcConfigResponse{
 			AuthorizationEndpoint: testAuthEndpoint,
 		}
 		return oidcConfig, nil
 	})
-
-	defer patches.Reset()
+	defer patchesForFetchOidcConfig.Reset()
 
 	logtoConfig := &LogtoConfig{
 		Endpoint:  "https://example.com",
@@ -79,5 +101,9 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 
 	if signInContext.State != stateInQuery {
 		t.Fatal("state in uri does not match the one in sign-in context")
+	}
+
+	if signInContext.CodeVerifier != testCodeVerifier {
+		t.Fatal("code verifier in sign-in context does not match the test code verifier")
 	}
 }

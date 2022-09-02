@@ -55,7 +55,7 @@ jobs:
 
       - name: Run Client Unit Tests And Generate Coverage Report
         run: |
-          mkdir -p ./build/client/test
+          mkdir -p ./build/client/test -gcflags=all=-l
           go test github.com/logto-io/go/client -coverprofile=./build/client/test/coverage.out -covermode=atomic
 
       - name: Upload Core Coverage Report
