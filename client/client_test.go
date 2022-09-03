@@ -77,26 +77,6 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 		ExpireIn:     3600,
 	}
 
-	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
-		&TestStorage{
-			data: map[string]string{
-				StorageKeyIdToken:      "id token",
-				StorageKeyRefreshToken: "refresh token",
-			},
-		},
-	)
-
-	expiredAccessToken := AccessToken{
-		Token:     "expired access token",
-		Scope:     "openid",
-		ExpiresAt: time.Now().Unix() - 60,
-	}
-
-	logtoClient.accessTokenMap["@"] = expiredAccessToken
-
 	var logtoClientSpy *LogtoClient
 	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
 		return core.OidcConfigResponse{}, nil
@@ -123,6 +103,26 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 		},
 	)
 	defer patchesForVerifyIdToken.Reset()
+
+	logtoClient := NewLogtoClient(
+		&LogtoConfig{
+			Resources: []string{""},
+		},
+		&TestStorage{
+			data: map[string]string{
+				StorageKeyIdToken:      "id token",
+				StorageKeyRefreshToken: "refresh token",
+			},
+		},
+	)
+
+	expiredAccessToken := AccessToken{
+		Token:     "expired access token",
+		Scope:     "openid",
+		ExpiresAt: time.Now().Unix() - 60,
+	}
+
+	logtoClient.accessTokenMap["@"] = expiredAccessToken
 
 	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
 
