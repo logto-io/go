@@ -10,6 +10,7 @@ import (
 
 func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
 	testEndSessionEndpoint := "https://example.com/end-session"
+	testSignOutUri := "testSignOutUri"
 
 	var logtoClientSpy *LogtoClient
 
@@ -19,14 +20,17 @@ func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
 		}
 		return oidcConfig, nil
 	})
-
 	defer patchesForFetchOidcConfig.Reset()
 
 	patchesForRevoke := gomonkey.ApplyFunc(core.Revoke, func(client *http.Client, options *core.RevocationOptions) error {
 		return nil
 	})
-
 	defer patchesForRevoke.Reset()
+
+	patchesForGenerateSignOutUri := gomonkey.ApplyFunc(core.GenerateSignOutUri, func(option *core.SignOutUriGenerationOptions) (string, error) {
+		return testSignOutUri, nil
+	})
+	defer patchesForGenerateSignOutUri.Reset()
 
 	storage := &TestStorage{
 		data: map[string]string{
@@ -42,7 +46,15 @@ func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
 		"key": {Token: "abc"},
 	}
 
-	logtoClient.SignOut("https://example.com/home")
+	gotSignOutUri, signOutErr := logtoClient.SignOut("https://example.com/home")
+
+	if signOutErr != nil {
+		t.Fatal(signOutErr)
+	}
+
+	if gotSignOutUri != testSignOutUri {
+		t.Fatalf("Expected sign-out URI : %v\nActual sign-out URI : %v", testSignOutUri, gotSignOutUri)
+	}
 
 	if storage.GetItem(StorageKeyIdToken) != "" {
 		t.Fatal("id token has not cleared")
