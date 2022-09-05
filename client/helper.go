@@ -18,7 +18,7 @@ func (logtoClient *LogtoClient) fetchOidcConfig() (core.OidcConfigResponse, erro
 
 func (logtoClient *LogtoClient) loadAccessTokenMap() {
 	accessTokenMap := make(map[string]AccessToken)
-	accessTokenMapJsonString := logtoClient.storage.GetItem("logto_access_token_map")
+	accessTokenMapJsonString := logtoClient.storage.GetItem(StorageKeyAccessTokenMap)
 	if accessTokenMapJsonString == "" {
 		return
 	}
