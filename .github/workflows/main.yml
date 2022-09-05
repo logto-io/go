@@ -51,12 +51,12 @@ jobs:
       - name: Run Core Unit Tests And Generate Coverage Report
         run: |
           mkdir -p ./build/core/test
-          go test github.com/logto-io/go/core -coverprofile=./build/core/test/coverage.out -covermode=atomic
+          go test github.com/logto-io/go/core -coverprofile=./build/core/test/coverage.out -covermode=atomic -gcflags=all=-l
 
       - name: Run Client Unit Tests And Generate Coverage Report
         run: |
           mkdir -p ./build/client/test
-          go test github.com/logto-io/go/client -coverprofile=./build/client/test/coverage.out -covermode=atomic
+          go test github.com/logto-io/go/client -coverprofile=./build/client/test/coverage.out -covermode=atomic -gcflags=all=-l
 
       - name: Upload Core Coverage Report
         uses: codecov/codecov-action@v3
