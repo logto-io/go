@@ -1,7 +1,6 @@
 package client
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
@@ -82,12 +81,12 @@ func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessTo
 
 func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, error) {
 	if !logtoClient.IsAuthenticated() {
-		return AccessToken{}, errors.New("not authenticated")
+		return AccessToken{}, ErrNotAuthenticated
 	}
 
 	// TODO: do not check granted resource if resource is empty
 	if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
-		return AccessToken{}, errors.New("unacknowledged resource found")
+		return AccessToken{}, ErrUnacknowledgedResourceFound
 	}
 
 	accessTokenKey := buildAccessTokenKey([]string{}, resource)
@@ -100,7 +99,7 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 	refreshToken := logtoClient.GetRefreshToken()
 
 	if refreshToken == "" {
-		return AccessToken{}, errors.New("not authenticated")
+		return AccessToken{}, ErrNotAuthenticated
 	}
 
 	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
