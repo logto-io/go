@@ -2,7 +2,6 @@ package client
 
 import (
 	"encoding/json"
-	"net/url"
 	"testing"
 
 	"github.com/agiledragon/gomonkey/v2"
@@ -17,6 +16,7 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 	testState := "testState"
 	testCodeVerifier := "testCodeVerifier"
 	testCodeChallenge := "testCodeChallenge"
+	testSignInUri := "testSignInUri"
 
 	patchesForGenerateState := gomonkey.ApplyFunc(core.GenerateState, func() string {
 		return testState
@@ -34,7 +34,7 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 	defer patchesForGenerateCodeChallenge.Reset()
 
 	patchesForGenerateSignInUri := gomonkey.ApplyFunc(core.GenerateSignInUri, func(option *core.SignInUriGenerationOptions) (string, error) {
-		return testAuthEndpoint + "?redirect_uri=" + testRedirectUri + "&state=" + testState + "&code_challenge=" + testCodeChallenge, nil
+		return testSignInUri, nil
 	})
 	defer patchesForGenerateSignInUri.Reset()
 
@@ -60,22 +60,14 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 
 	logtoClient := NewLogtoClient(logtoConfig, storage)
 
-	signInUri, signInErr := logtoClient.SignIn(testRedirectUri)
+	gotSignInUri, signInErr := logtoClient.SignIn(testRedirectUri)
 
 	if signInErr != nil {
 		t.Fatal(signInErr)
 	}
 
-	parsedUri, parseUriErr := url.Parse(signInUri)
-
-	if parseUriErr != nil {
-		t.Fatal(parseUriErr)
-	}
-
-	gotAuthEndpoint := parsedUri.Scheme + "://" + parsedUri.Host + parsedUri.Path
-
-	if gotAuthEndpoint != testAuthEndpoint {
-		t.Fatalf("Expected auth endpoint : %v\nActual auth endpoint : %v", testAuthEndpoint, gotAuthEndpoint)
+	if gotSignInUri != testSignInUri {
+		t.Fatalf("Expected sign-in URI : %v\nActual sign-in URI : %v", testAuthEndpoint, gotSignInUri)
 	}
 
 	signInContext := SignInContext{}
@@ -85,21 +77,15 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 		t.Fatal(parseSignInContextErr)
 	}
 
-	redirectUriInQuery := parsedUri.Query().Get("redirect_uri")
-
-	if redirectUriInQuery != testRedirectUri {
-		t.Fatalf("Expected redirect uri: %v\nActual redirect uri: %v", testRedirectUri, redirectUriInQuery)
+	if signInContext.RedirectUri != testRedirectUri {
+		t.Fatalf("Expected redirect uri: %v\nActual redirect uri: %v", testRedirectUri, signInContext.RedirectUri)
 	}
 
-	codeChallengeInQuery := parsedUri.Query().Get("code_challenge")
-
-	if signInContext.CodeChallenge != codeChallengeInQuery {
+	if signInContext.CodeChallenge != testCodeChallenge {
 		t.Fatal("code challenge in uri does not match the one in sign-in context")
 	}
 
-	stateInQuery := parsedUri.Query().Get("state")
-
-	if signInContext.State != stateInQuery {
+	if signInContext.State != testState {
 		t.Fatal("state in uri does not match the one in sign-in context")
 	}
 
