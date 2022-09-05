@@ -18,6 +18,16 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 	testCodeChallenge := "testCodeChallenge"
 	testSignInUri := "testSignInUri"
 
+	var logtoClientSpy *LogtoClient
+
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		oidcConfig := core.OidcConfigResponse{
+			AuthorizationEndpoint: testAuthEndpoint,
+		}
+		return oidcConfig, nil
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
 	patchesForGenerateState := gomonkey.ApplyFunc(core.GenerateState, func() string {
 		return testState
 	})
@@ -37,16 +47,6 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 		return testSignInUri, nil
 	})
 	defer patchesForGenerateSignInUri.Reset()
-
-	var logtoClientSpy *LogtoClient
-
-	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
-		oidcConfig := core.OidcConfigResponse{
-			AuthorizationEndpoint: testAuthEndpoint,
-		}
-		return oidcConfig, nil
-	})
-	defer patchesForFetchOidcConfig.Reset()
 
 	logtoConfig := &LogtoConfig{
 		Endpoint:  "https://example.com",
