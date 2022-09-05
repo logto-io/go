@@ -3,40 +3,32 @@ package core
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestVerifyAndParseCodeFromCallbackUriShouldGetCorrectCode(t *testing.T) {
 	state := "state"
-	code := "code"
-	callbackUri := fmt.Sprintf("http://localhost:8080/callback?code=%s&state=%s", code, state)
+	testCode := "code"
+	callbackUri := fmt.Sprintf("http://localhost:8080/callback?code=%s&state=%s", testCode, state)
 	redirectUri := "http://localhost:8080/callback"
 
 	parsedCode, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, state)
 
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-
-	if parsedCode != code {
-		t.Fatalf("parsed code not match")
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, testCode, parsedCode)
 }
 
 func TestVerifyAndParseCodeFromCallbackUriShouldGetCorrectCodeFromCustomSchemaCallbackUri(t *testing.T) {
 	state := "state"
-	code := "code"
-	callbackUri := fmt.Sprintf("io.logto://localhost:8080/callback?code=%s&state=%s", code, state)
+	testCode := "code"
+	callbackUri := fmt.Sprintf("io.logto://localhost:8080/callback?code=%s&state=%s", testCode, state)
 	redirectUri := "io.logto://localhost:8080/callback"
 
 	parsedCode, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, state)
 
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-
-	if parsedCode != code {
-		t.Fatalf("Expected code: %s, but got: %s", code, parsedCode)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, testCode, parsedCode)
 }
 
 func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCallbackUriNotMatchRedirectUri(t *testing.T) {
@@ -47,9 +39,7 @@ func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCallbackUriNotMatch
 
 	_, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, state)
 
-	if err == nil || err.Error() != ErrCallbackUriNotMatchRedirectUri.Error() {
-		t.Fatalf("Expected error: %s, but got: %s", ErrCallbackUriNotMatchRedirectUri.Error(), err.Error())
-	}
+	assert.Equal(t, ErrCallbackUriNotMatchRedirectUri, err)
 }
 
 func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfStateNotMatch(t *testing.T) {
@@ -60,9 +50,7 @@ func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfStateNotMatch(t *te
 
 	_, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, "state2")
 
-	if err == nil || err.Error() != ErrStateNotMatch.Error() {
-		t.Fatalf("Expected error: %s, but got: %s", ErrStateNotMatch.Error(), err.Error())
-	}
+	assert.Equal(t, ErrStateNotMatch, err)
 }
 
 func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCallbackUriHasError(t *testing.T) {
@@ -73,9 +61,7 @@ func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCallbackUriHasError
 
 	_, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, "state")
 
-	if err == nil || err.Error() != fmt.Sprintf("%s: %s", errorInUri, errorDescriptionInUri) {
-		t.Fatalf("Expected error: %s, but got: %s", fmt.Sprintf("%s: %s", errorInUri, errorDescriptionInUri), err.Error())
-	}
+	assert.EqualError(t, err, fmt.Sprintf("%s: %s", errorInUri, errorDescriptionInUri))
 }
 
 func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCodeNotFoundInCallbackUri(t *testing.T) {
@@ -85,7 +71,5 @@ func TestVerifyAndParseCodeFromCallbackUriShouldReturnErrorIfCodeNotFoundInCallb
 
 	_, err := VerifyAndParseCodeFromCallbackUri(callbackUri, redirectUri, state)
 
-	if err == nil || err.Error() != ErrCodeNotFoundInCallbackUri.Error() {
-		t.Fatalf("Expected error: %s, but got: %s", ErrCodeNotFoundInCallbackUri.Error(), err.Error())
-	}
+	assert.Equal(t, ErrCodeNotFoundInCallbackUri, err)
 }

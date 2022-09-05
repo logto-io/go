@@ -3,6 +3,8 @@ package core
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestVerifyIdToken(t *testing.T) {
@@ -26,15 +28,11 @@ func TestVerifyIdToken(t *testing.T) {
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
 
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, &jwks)
 
-	if verifyIdTokenError != nil {
-		t.Fatalf(verifyIdTokenError.Error())
-	}
+	assert.Nil(t, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldSupportES512FormatJwks(t *testing.T) {
@@ -57,16 +55,11 @@ func TestVerifyIdTokenShouldSupportES512FormatJwks(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateEcdsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	verifyIdTokenError := VerifyIdToken(idToken, audience, issuer, &jwks)
 
-	if verifyIdTokenError != nil {
-		t.Fatalf(verifyIdTokenError.Error())
-	}
+	assert.Nil(t, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInThePast(t *testing.T) {
@@ -87,16 +80,11 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInThePast(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
-	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuedInThePast.Error() {
-		t.Fatalf("Expected error when issuedAt is in the past")
-	}
+	assert.Equal(t, ErrTokenIssuedInThePast, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInTheFuture(t *testing.T) {
@@ -117,16 +105,11 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInTheFuture(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
-	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuedInTheFuture.Error() {
-		t.Fatalf("Expected error when issuedAt is in the future")
-	}
+	assert.Equal(t, ErrTokenIssuedInTheFuture, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldReturnErrorIfExpired(t *testing.T) {
@@ -146,16 +129,11 @@ func TestVerifyIdTokenShouldReturnErrorIfExpired(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", "issuer.logto.io", &jwks)
 
-	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenExpired.Error() {
-		t.Fatalf("Expected error when expired")
-	}
+	assert.Equal(t, ErrTokenExpired, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldReturnErrorIfIssuerIsNotMatched(t *testing.T) {
@@ -177,18 +155,13 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuerIsNotMatched(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	anotherIssuer := "issuer.another.io"
 
 	verifyIdTokenError := VerifyIdToken(idToken, "audience.logto.io", anotherIssuer, &jwks)
 
-	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenIssuerNotMatch.Error() {
-		t.Fatalf("Expected error when issuer is not matched")
-	}
+	assert.Equal(t, ErrTokenIssuerNotMatch, verifyIdTokenError)
 }
 
 func TestVerifyIdTokenShouldReturnErrorIfAudienceIsNotMatched(t *testing.T) {
@@ -210,16 +183,11 @@ func TestVerifyIdTokenShouldReturnErrorIfAudienceIsNotMatched(t *testing.T) {
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
-
-	if generateError != nil {
-		t.Fatalf(generateError.Error())
-	}
+	assert.Nil(t, generateError)
 
 	anotherAudience := "audience.another.io"
 
 	verifyIdTokenError := VerifyIdToken(idToken, anotherAudience, "issuer.logto.io", &jwks)
 
-	if verifyIdTokenError == nil || verifyIdTokenError.Error() != ErrTokenAudienceNotMatch.Error() {
-		t.Fatalf("Expected error when audience is not matched")
-	}
+	assert.Equal(t, ErrTokenAudienceNotMatch, verifyIdTokenError)
 }

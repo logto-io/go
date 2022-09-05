@@ -1,19 +1,18 @@
 package client
 
 import (
-	"errors"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/agiledragon/gomonkey/v2"
-	"github.com/google/go-cmp/cmp"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
 )
 
 func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T) {
-	wantedAccessToken := AccessToken{
+	testAccessToken := AccessToken{
 		Token:     "accessToken",
 		Scope:     "openid",
 		ExpiresAt: time.Now().Unix() + 60,
@@ -30,17 +29,12 @@ func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T
 		},
 	)
 
-	logtoClient.accessTokenMap["@"] = wantedAccessToken
+	logtoClient.accessTokenMap["@"] = testAccessToken
 
-	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	if getAccessTokenErr != nil {
-		t.Fatal(getAccessTokenErr)
-	}
-
-	if !cmp.Equal(gotAccessToken, wantedAccessToken) {
-		t.Fatalf("Expected Access Token : %v\nActual Access Token : %v", wantedAccessToken, gotAccessToken)
-	}
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken)
 }
 
 func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *testing.T) {
@@ -55,13 +49,9 @@ func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *te
 		},
 	)
 
-	_, gotErr := logtoClient.GetAccessToken("")
+	_, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	wantedErr := errors.New("not authenticated")
-
-	if !cmp.Equal(gotErr.Error(), wantedErr.Error()) {
-		t.Fatalf("Expected Error : %s\nActual Error : %s", wantedErr.Error(), gotErr.Error())
-	}
+	assert.Equal(t, ErrNotAuthenticated, getAccessTokenErr)
 }
 
 func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIfLocalAccessTokenIsExpired(t *testing.T) {
@@ -124,19 +114,9 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 
 	logtoClient.accessTokenMap["@"] = expiredAccessToken
 
-	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	if getAccessTokenErr != nil {
-		t.Fatal(getAccessTokenErr)
-	}
-
-	if gotAccessToken.Token != testAccessToken {
-		t.Fatalf("Expected access token : %s\nActual access token : %s", testAccessToken, gotAccessToken.Token)
-	}
-
-	updatedAccessToken := logtoClient.accessTokenMap["@"]
-
-	if updatedAccessToken.Token != testAccessToken {
-		t.Fatalf("Local access token have not been updated, want : %s\ngot : %s", testAccessToken, updatedAccessToken.Token)
-	}
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken.Token)
+	assert.Equal(t, testAccessToken, logtoClient.accessTokenMap["@"].Token)
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
@@ -60,36 +61,16 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 
 	logtoClient := NewLogtoClient(logtoConfig, storage)
 
-	gotSignInUri, signInErr := logtoClient.SignIn(testRedirectUri)
-
-	if signInErr != nil {
-		t.Fatal(signInErr)
-	}
-
-	if gotSignInUri != testSignInUri {
-		t.Fatalf("Expected sign-in URI : %v\nActual sign-in URI : %v", testAuthEndpoint, gotSignInUri)
-	}
+	signInUri, signInErr := logtoClient.SignIn(testRedirectUri)
+	assert.Nil(t, signInErr)
+	assert.Equal(t, testSignInUri, signInUri)
 
 	signInContext := SignInContext{}
 	parseSignInContextErr := json.Unmarshal([]byte(storage.GetItem(StorageKeySignInContext)), &signInContext)
 
-	if parseSignInContextErr != nil {
-		t.Fatal(parseSignInContextErr)
-	}
-
-	if signInContext.RedirectUri != testRedirectUri {
-		t.Fatalf("Expected redirect uri: %v\nActual redirect uri: %v", testRedirectUri, signInContext.RedirectUri)
-	}
-
-	if signInContext.CodeChallenge != testCodeChallenge {
-		t.Fatal("code challenge in uri does not match the one in sign-in context")
-	}
-
-	if signInContext.State != testState {
-		t.Fatal("state in uri does not match the one in sign-in context")
-	}
-
-	if signInContext.CodeVerifier != testCodeVerifier {
-		t.Fatal("code verifier in sign-in context does not match the test code verifier")
-	}
+	assert.Nil(t, parseSignInContextErr)
+	assert.Equal(t, testRedirectUri, signInContext.RedirectUri)
+	assert.Equal(t, testCodeChallenge, signInContext.CodeChallenge)
+	assert.Equal(t, testState, signInContext.State)
+	assert.Equal(t, testCodeVerifier, signInContext.CodeVerifier)
 }

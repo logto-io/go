@@ -2,21 +2,18 @@ package core
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateCodeVerifierShouldGenerateRandomString(t *testing.T) {
 	codeVerifier1 := GenerateCodeVerifier()
 	codeVerifier2 := GenerateCodeVerifier()
-	if codeVerifier1 == codeVerifier2 {
-		t.Fatalf("GenerateCodeVerifier should generate random string")
-	}
+	assert.NotEqual(t, codeVerifier1, codeVerifier2)
 }
 
 func TestGenerateCodeVerifierShouldGenerateStringsLessThan128Characters(t *testing.T) {
-	codeVerifier := GenerateCodeVerifier()
-	if len(codeVerifier) > 128 {
-		t.Fatalf("GenerateCodeVerifier should generate string less than 128 characters")
-	}
+	assert.Greater(t, 128, len(GenerateCodeVerifier()))
 }
 
 func TestGenerateCodeChallengeShouldGenerateDifferentStringByDifferentCodeVerifier(t *testing.T) {
@@ -26,9 +23,7 @@ func TestGenerateCodeChallengeShouldGenerateDifferentStringByDifferentCodeVerifi
 	codeVerifier2 := GenerateCodeVerifier()
 	codeChallenge2 := GenerateCodeChallenge(codeVerifier2)
 
-	if codeChallenge1 == codeChallenge2 {
-		t.Fatalf("GenerateCodeChallenge should generate different string by different code verifier")
-	}
+	assert.NotEqual(t, codeChallenge1, codeChallenge2)
 }
 
 func TestGenerateCodeChallengeShouldGenerateCorrectString(t *testing.T) {
@@ -39,9 +34,7 @@ func TestGenerateCodeChallengeShouldGenerateCorrectString(t *testing.T) {
 		"🚀": "67wLKHDrMj8rbP-lxJPO74GufrNq_HPU4DZzAWMdrsU",
 	}
 	for codeVerifier, codeChallenge := range codeVerifierAndChallengeMap {
-		if GenerateCodeChallenge(codeVerifier) != codeChallenge {
-			t.Fatalf("GenerateCodeChallenge should generate correct string")
-		}
+		assert.Equal(t, codeChallenge, GenerateCodeChallenge(codeVerifier))
 	}
 }
 
@@ -49,15 +42,11 @@ func TestGenerateCodeChallengeShouldGenerateTheSameStringWithTheSameCodeVerifier
 	codeVerifier := GenerateCodeVerifier()
 	codeChallenge1 := GenerateCodeChallenge(codeVerifier)
 	codeChallenge2 := GenerateCodeChallenge(codeVerifier)
-	if codeChallenge1 != codeChallenge2 {
-		t.Fatalf("GenerateCodeChallenge should generate the same string with the same code verifier")
-	}
+	assert.Equal(t, codeChallenge1, codeChallenge2)
 }
 
 func TestGenerateStateShouldGenerateRandomString(t *testing.T) {
 	state1 := GenerateState()
 	state2 := GenerateState()
-	if state1 == state2 {
-		t.Fatalf("GenerateState should generate random string")
-	}
+	assert.NotEqual(t, state1, state2)
 }

@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestRevoke(t *testing.T) {
+func TestRevokeShouldRevokeSuccessfully(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -27,9 +28,7 @@ func TestRevoke(t *testing.T) {
 		Token:              "token",
 	}
 
-	err := Revoke(client, options)
+	revokeErr := Revoke(client, options)
 
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	assert.Nil(t, revokeErr)
 }

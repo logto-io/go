@@ -1,36 +1,31 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestGenerateSignOutUriShouldGenerateCorrectUri(t *testing.T) {
-	expectedSignOutUri := "https://example.com/logout?id_token_hint=idToken&post_logout_redirect_uri=https://example.com/callback"
-	signOutUri, err := GenerateSignOutUri(&SignOutUriGenerationOptions{
+	testSignOutUri := "https://example.com/logout?id_token_hint=idToken&post_logout_redirect_uri=https://example.com/callback"
+	signOutUri, generateSignOutUriErr := GenerateSignOutUri(&SignOutUriGenerationOptions{
 		EndSessionEndpoint:    "https://example.com/logout",
 		IdToken:               "idToken",
 		PostLogoutRedirectUri: "https://example.com/callback",
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signOutUri != expectedSignOutUri {
-		t.Errorf("Expected %s, got %s", expectedSignOutUri, signOutUri)
-	}
+	assert.Nil(t, generateSignOutUriErr)
+	assert.Equal(t, testSignOutUri, signOutUri)
 }
 
 func TestGenerateSignOutUriShouldGenerateCorrectUriWithoutPostLogoutRedirectUri(t *testing.T) {
-	expectedSignOutUri := "https://example.com/logout?id_token_hint=idToken"
+	testSignOutUri := "https://example.com/logout?id_token_hint=idToken"
 
-	signOutUri, err := GenerateSignOutUri(&SignOutUriGenerationOptions{
+	signOutUri, generateSignOutUriErr := GenerateSignOutUri(&SignOutUriGenerationOptions{
 		EndSessionEndpoint: "https://example.com/logout",
 		IdToken:            "idToken",
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	if signOutUri != expectedSignOutUri {
-		t.Errorf("Expected %s, got %s", expectedSignOutUri, signOutUri)
-	}
+	assert.Nil(t, generateSignOutUriErr)
+	assert.Equal(t, testSignOutUri, signOutUri)
 }

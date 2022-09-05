@@ -1,12 +1,12 @@
 package client
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -69,38 +69,17 @@ func TestHandleSignInCallbackShouldHandleCallbackCorrectly(t *testing.T) {
 	}, storage)
 
 	signInCallbackRequest, createSignInCallbackRequestErr := http.NewRequest("GET", "https://example.com/sign-in-callback", nil)
-
-	if createSignInCallbackRequestErr != nil {
-		t.Fatal(createSignInCallbackRequestErr)
-	}
+	assert.Nil(t, createSignInCallbackRequestErr)
 
 	handleSignInErr := logtoClient.HandleSignInCallback(signInCallbackRequest)
+	assert.Nil(t, handleSignInErr)
 
-	if handleSignInErr != nil {
-		t.Fatal(handleSignInErr)
-	}
+	assert.Equal(t, "", storage.GetItem(StorageKeySignInContext))
+	assert.Equal(t, testIdToken, logtoClient.GetIdToken())
+	assert.Equal(t, testRefreshToken, logtoClient.GetRefreshToken())
+	assert.True(t, logtoClient.IsAuthenticated())
 
-	if storage.GetItem(StorageKeySignInContext) != "" {
-		t.Fatal("sign-in context must be cleared after handle sign-in callback")
-	}
-
-	gotIdToken := logtoClient.GetIdToken()
-	if gotIdToken != testIdToken {
-		t.Fatalf("Expected id token: %s\nActual id token: %v", testIdToken, gotIdToken)
-	}
-
-	gotAccessToken, _ := logtoClient.GetAccessToken("")
-	if gotAccessToken.Token != testAccessToken {
-		fmt.Println(logtoClient.accessTokenMap)
-		t.Fatalf("Expected access token: %s\nActual access token: %v", testAccessToken, gotAccessToken.Token)
-	}
-
-	gotRefreshToken := logtoClient.GetRefreshToken()
-	if gotRefreshToken != testRefreshToken {
-		t.Fatalf("Expected refresh token: %s\nActual refresh token: %v", testRefreshToken, gotRefreshToken)
-	}
-
-	if !logtoClient.IsAuthenticated() {
-		t.Fatal("Expected authenticate state: authenticated\nActual authenticate state: not authenticated")
-	}
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken.Token)
 }
