@@ -65,12 +65,12 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 	assert.Nil(t, signInErr)
 	assert.Equal(t, testSignInUri, signInUri)
 
-	signInContext := SignInContext{}
-	parseSignInContextErr := json.Unmarshal([]byte(storage.GetItem(StorageKeySignInContext)), &signInContext)
+	signInSession := SignInSession{}
+	parseSignInSessionErr := json.Unmarshal([]byte(storage.GetItem(StorageKeySignInSession)), &signInSession)
 
-	assert.Nil(t, parseSignInContextErr)
-	assert.Equal(t, testRedirectUri, signInContext.RedirectUri)
-	assert.Equal(t, testCodeChallenge, signInContext.CodeChallenge)
-	assert.Equal(t, testState, signInContext.State)
-	assert.Equal(t, testCodeVerifier, signInContext.CodeVerifier)
+	assert.Nil(t, parseSignInSessionErr)
+	assert.Equal(t, testRedirectUri, signInSession.RedirectUri)
+	assert.Equal(t, testCodeChallenge, signInSession.CodeChallenge)
+	assert.Equal(t, testState, signInSession.State)
+	assert.Equal(t, testCodeVerifier, signInSession.CodeVerifier)
 }
