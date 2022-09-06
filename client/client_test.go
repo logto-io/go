@@ -19,9 +19,7 @@ func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T
 	}
 
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken: "id token",
@@ -39,9 +37,7 @@ func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T
 
 func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *testing.T) {
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken: "",
@@ -95,9 +91,7 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 	defer patchesForVerifyIdToken.Reset()
 
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken:      "id token",
