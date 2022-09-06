@@ -7,9 +7,10 @@
 </p>
 
 # Logto Go SDKs
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/logto-io/go)](https://pkg.go.dev/github.com/logto-io/go)
 [![Build Status](https://github.com/logto-io/go/actions/workflows/main.yml/badge.svg)](https://github.com/logto-io/go/actions/workflows/main.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/logto-io/go)](https://app.codecov.io/gh/logto-io/go?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/logto-io/go)](https://goreportcard.com/report/github.com/logto-io/go)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/logto-io/go)](https://pkg.go.dev/github.com/logto-io/go)
 
 The repo for SDKs and working samples written in Go.
 
