@@ -60,7 +60,7 @@ func TestHandleSignInCallbackShouldHandleCallbackCorrectly(t *testing.T) {
 
 	storage := &TestStorage{
 		data: map[string]string{
-			StorageKeySignInContext: `{"RedirectUri":"redirectUri","CodeVerifier":"codeVerifier","CodeChallenge":"codeChallenge","State":"state"}`,
+			StorageKeySignInSession: `{"RedirectUri":"redirectUri","CodeVerifier":"codeVerifier","CodeChallenge":"codeChallenge","State":"state"}`,
 		},
 	}
 
@@ -74,7 +74,7 @@ func TestHandleSignInCallbackShouldHandleCallbackCorrectly(t *testing.T) {
 	handleSignInErr := logtoClient.HandleSignInCallback(signInCallbackRequest)
 	assert.Nil(t, handleSignInErr)
 
-	assert.Equal(t, "", storage.GetItem(StorageKeySignInContext))
+	assert.Equal(t, "", storage.GetItem(StorageKeySignInSession))
 	assert.Equal(t, testIdToken, logtoClient.GetIdToken())
 	assert.Equal(t, testRefreshToken, logtoClient.GetRefreshToken())
 	assert.True(t, logtoClient.IsAuthenticated())
