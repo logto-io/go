@@ -1,0 +1,56 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      semver:
+        description: Semver bump type
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_PAT }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.BOT_GPG_KEY }}
+          passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Configure Git user
+        run: |
+          git config --global user.email bot@silverhand.io
+          git config --global user.name silverhand-bot
+
+      - name: Setup Go Env
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19'
+
+      - name: Generate change log
+        run: |
+          go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
+          git-chglog -o CHANGELOG.md
+
+      - name: Commit change log and tag version
+        run: |
+          git add .
+          git commit -m 'release: ${{ github.event.inputs.semver }}' --no-verify -S
+          git tag ${{ github.event.inputs.semver }} -m 'release: ${{ github.event.inputs.semver }}' -s
+        env:
+          GH_TOKEN: ${{ secrets.BOT_PAT }}
+      
+      - name: Push to protected branch
+        uses: CasperWA/push-protected@v2
+        with:
+          token: ${{ secrets.BOT_PAT }}
+          branch: master
+          tags: true
+          timeout: 20
