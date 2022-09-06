@@ -7,60 +7,41 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 func TestGetOriginRequestUrlShouldReturnCorrectUrl(t *testing.T) {
-	requestUrl := "http://example.com/good"
-	request, createRequestErr := http.NewRequest("GET", requestUrl, nil)
-	if createRequestErr != nil {
-		t.Fatalf(createRequestErr.Error())
-	}
-
+	testRequestUrl := "http://example.com/good"
+	request, createRequestErr := http.NewRequest("GET", testRequestUrl, nil)
+	assert.Nil(t, createRequestErr)
 	// specify request uri before really perform a request
 	request.RequestURI = "/good"
 
 	originUrl := GetOriginRequestUrl(request)
 
-	if originUrl != requestUrl {
-		t.Fatalf("Expected URL: %v\nActual URL: %v", requestUrl, originUrl)
-	}
+	assert.Equal(t, testRequestUrl, originUrl)
 }
 
 func TestGetOriginRequestUrlShouldReturnCorrectUrlWithForwardProtoConfig(t *testing.T) {
-	requestUri := "example.com/good"
-	request, createRequestErr := http.NewRequest("GET", "http://"+requestUri, nil)
-
-	if createRequestErr != nil {
-		t.Fatalf(createRequestErr.Error())
-	}
-
+	testRequestUri := "example.com/good"
+	request, createRequestErr := http.NewRequest("GET", "http://"+testRequestUri, nil)
+	assert.Nil(t, createRequestErr)
 	// specify request uri before really perform a request
 	request.RequestURI = "/good"
 
 	request.Header.Add("X-Forwarded-Proto", "https")
 
-	if createRequestErr != nil {
-		t.Fatalf(createRequestErr.Error())
-	}
-
 	originUrl := GetOriginRequestUrl(request)
 
-	expectedUrl := "https://" + requestUri
-
-	if originUrl != expectedUrl {
-		t.Fatalf("Expected URL: %v\nActual URL: %v", expectedUrl, originUrl)
-	}
+	assert.Equal(t, "https://"+testRequestUri, originUrl)
 }
 
 func TestGetOriginRequestUrlShouldReturnCorrectUrlWithTlsConnection(t *testing.T) {
-	requestUri := "example.com/good"
-	request, createRequestErr := http.NewRequest("GET", "http://"+requestUri, nil)
-	if createRequestErr != nil {
-		t.Fatalf(createRequestErr.Error())
-	}
-
+	testRequestUri := "example.com/good"
+	request, createRequestErr := http.NewRequest("GET", "http://"+testRequestUri, nil)
+	assert.Nil(t, createRequestErr)
 	// specify request uri before really perform a request
 	request.RequestURI = "/good"
 
@@ -68,14 +49,10 @@ func TestGetOriginRequestUrlShouldReturnCorrectUrlWithTlsConnection(t *testing.T
 
 	originUrl := GetOriginRequestUrl(request)
 
-	expectedUrl := "https://" + requestUri
-
-	if originUrl != expectedUrl {
-		t.Fatalf("Expected URL: %v\nActual URL: %v", expectedUrl, originUrl)
-	}
+	assert.Equal(t, "https://"+testRequestUri, originUrl)
 }
 
-func TestCreateHttpClient(t *testing.T) {
+func TestCreateHttpClientShouldReturnHttpClientWithCustomTransportCompletion(t *testing.T) {
 	logtoConfig := &LogtoConfig{
 		AppId:     "AppId",
 		AppSecret: "AppSecret",
@@ -83,16 +60,14 @@ func TestCreateHttpClient(t *testing.T) {
 
 	logtoHttpClient := createHttpClient(logtoConfig)
 
-	if logtoHttpClient.Transport == http.DefaultTransport {
-		t.Fatal("Create HTTP client for Logto failed")
-	}
+	assert.NotEqual(t, http.DefaultTransport, logtoHttpClient.Transport)
 }
 
 func TestBuildAccessTokenKeyShouldBuildCorrectly(t *testing.T) {
 	tests := []struct {
 		scopes   []string
 		resource string
-		want     string
+		result   string
 	}{
 		{[]string{}, "", "@"},
 		{[]string{}, "http://api.example.com", "@http://api.example.com"},
@@ -103,40 +78,30 @@ func TestBuildAccessTokenKeyShouldBuildCorrectly(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := buildAccessTokenKey(test.scopes, test.resource); got != test.want {
-			t.Fatalf("Expected Access Token Key: %v\nActual Access Token Key: %v", test.want, got)
-		}
+		accessTokenKey := buildAccessTokenKey(test.scopes, test.resource)
+		assert.Equal(t, test.result, accessTokenKey)
 	}
 }
 
 func TestGetResourceFromAccessTokenShouldGetResourceCorrectly(t *testing.T) {
-	expectedResource := "example.com"
-	testAccessToken, createTokenError := createTestToken(expectedResource)
-
-	if createTokenError != nil {
-		t.Fatal(createTokenError)
-	}
+	testResource := "example.com"
+	testAccessToken, createTokenError := createTestToken(testResource)
+	assert.Nil(t, createTokenError)
 
 	resource := getResourceFromAccessToken(testAccessToken)
 
-	if resource != expectedResource {
-		t.Fatalf("Expected Resource: %v\nActual Resource: %v", expectedResource, resource)
-	}
+	assert.Equal(t, testResource, resource)
 }
 
 func TestGetResourceFromAccessTokenShouldReturnEmptyStringIfResourceMissing(t *testing.T) {
-	expectedResource := ""
+	testResource := ""
 
-	testAccessToken, createTokenErr := createTestToken(expectedResource)
-	if createTokenErr != nil {
-		t.Fatal(createTokenErr)
-	}
+	testAccessToken, createTokenErr := createTestToken(testResource)
+	assert.Nil(t, createTokenErr)
 
 	resource := getResourceFromAccessToken(testAccessToken)
 
-	if resource != expectedResource {
-		t.Fatalf("Expected Resource: %v\nActual Resource: %v", expectedResource, resource)
-	}
+	assert.Equal(t, testResource, resource)
 }
 
 func createTestToken(resource string) (string, error) {

@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDecodeIdTokenShouldGetExpectedIdTokenClaims(t *testing.T) {
 	now := time.Now()
-	var expectedClaims = IdTokenClaims{
+	testClaims := IdTokenClaims{
 		Sub:       "1234567890",
 		Aud:       "1234567890",
 		Exp:       now.Add(time.Hour).Unix(),
@@ -22,29 +22,19 @@ func TestDecodeIdTokenShouldGetExpectedIdTokenClaims(t *testing.T) {
 		RoleNames: []string{"1234567890"},
 	}
 
-	idToken, _, generateError := generateRsaSigningTestTokenAndCorrespondJwks(expectedClaims)
+	idToken, _, generateError := generateRsaSigningTestTokenAndCorrespondJwks(testClaims)
+	assert.Nil(t, generateError)
 
-	if generateError != nil {
-		t.Fatalf("Generate Test Token Error")
-	}
+	idTokenClaims, decodeIdTokenErr := DecodeIdToken(idToken)
+	assert.Nil(t, decodeIdTokenErr)
 
-	idTokenClaims, err := DecodeIdToken(idToken)
-
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-
-	if !cmp.Equal(expectedClaims, idTokenClaims) {
-		t.Fatalf("Expected Claims: %v\nActual Claims: %v", expectedClaims, idTokenClaims)
-	}
+	assert.Equal(t, idTokenClaims, testClaims)
 }
 
 func TestDecodeIdTokenShouldReturnErrorWhenTokenIsInvalid(t *testing.T) {
 	idToken := "invalid_token"
 
-	_, err := DecodeIdToken(idToken)
+	_, decodeIdTokenErr := DecodeIdToken(idToken)
 
-	if err == nil {
-		t.Fatalf("Expected error when decoding invalid token")
-	}
+	assert.NotNil(t, decodeIdTokenErr)
 }

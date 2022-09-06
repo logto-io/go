@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFetchOidcConfig(t *testing.T) {
@@ -30,19 +30,12 @@ func TestFetchOidcConfig(t *testing.T) {
 	)
 
 	client := &http.Client{}
-	config, err := FetchOidcConfig(client, endpoint)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-	var expectedConfig OidcConfigResponse
+	oidcConfig, fetchOidcConfigErr := FetchOidcConfig(client, endpoint)
+	assert.Nil(t, fetchOidcConfigErr)
 
-	unmarshalErr := json.Unmarshal([]byte(mockResponse), &expectedConfig)
+	var testOidcConfig OidcConfigResponse
+	unmarshalErr := json.Unmarshal([]byte(mockResponse), &testOidcConfig)
+	assert.Nil(t, unmarshalErr)
 
-	if unmarshalErr != nil {
-		t.Fatalf(unmarshalErr.Error())
-	}
-
-	if !cmp.Equal(config, expectedConfig) {
-		t.Fatalf("config does not match expected result")
-	}
+	assert.Equal(t, testOidcConfig, oidcConfig)
 }

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFetchTokenByAuthorizationCode(t *testing.T) {
@@ -39,20 +39,13 @@ func TestFetchTokenByAuthorizationCode(t *testing.T) {
 	}
 
 	token, fetchError := FetchTokenByAuthorizationCode(client, options)
-	if fetchError != nil {
-		t.Fatalf(fetchError.Error())
-	}
+	assert.Nil(t, fetchError)
 
-	var expectedToken CodeTokenResponse
-	unmarshalErr := json.Unmarshal([]byte(mockResponse), &expectedToken)
+	var testToken CodeTokenResponse
+	unmarshalErr := json.Unmarshal([]byte(mockResponse), &testToken)
+	assert.Nil(t, unmarshalErr)
 
-	if unmarshalErr != nil {
-		t.Fatalf(unmarshalErr.Error())
-	}
-
-	if !cmp.Equal(token, expectedToken) {
-		t.Fatalf("token does not match expected result")
-	}
+	assert.Equal(t, testToken, token)
 }
 
 func TestFetchTokenByRefreshToken(t *testing.T) {
@@ -84,18 +77,11 @@ func TestFetchTokenByRefreshToken(t *testing.T) {
 	}
 
 	token, fetchError := FetchTokenByRefreshToken(client, options)
-	if fetchError != nil {
-		t.Fatalf(fetchError.Error())
-	}
+	assert.Nil(t, fetchError)
 
-	var expectedToken RefreshTokenResponse
-	unmarshalErr := json.Unmarshal([]byte(mockResponse), &expectedToken)
+	var testToken RefreshTokenResponse
+	unmarshalErr := json.Unmarshal([]byte(mockResponse), &testToken)
+	assert.Nil(t, unmarshalErr)
 
-	if unmarshalErr != nil {
-		t.Fatalf(unmarshalErr.Error())
-	}
-
-	if !cmp.Equal(token, expectedToken) {
-		t.Fatalf("token does not match expected result")
-	}
+	assert.Equal(t, testToken, token)
 }

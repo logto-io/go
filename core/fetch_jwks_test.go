@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFetchJwks(t *testing.T) {
@@ -32,18 +32,11 @@ func TestFetchJwks(t *testing.T) {
 	client := &http.Client{}
 
 	jwks, fetchError := FetchJwks(client, jwksEndpoint)
-	if fetchError != nil {
-		t.Fatalf(fetchError.Error())
-	}
+	assert.Nil(t, fetchError)
 
-	var expectedJwks JwksResponse
-	unmarshalErr := json.Unmarshal([]byte(mockResponse), &expectedJwks)
+	var testJwks JwksResponse
+	unmarshalErr := json.Unmarshal([]byte(mockResponse), &testJwks)
+	assert.Nil(t, unmarshalErr)
 
-	if unmarshalErr != nil {
-		t.Fatalf(unmarshalErr.Error())
-	}
-
-	if !cmp.Equal(jwks, expectedJwks) {
-		t.Fatalf("jwks does not match expected result")
-	}
+	assert.Equal(t, testJwks, jwks)
 }
