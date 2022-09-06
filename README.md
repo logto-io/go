@@ -27,7 +27,7 @@ go get github.com/logto-io/go
 
 To update Logto Go SDK to the latest version, use:
 ```bash
-go get -u `github.com/logto-io/go`
+go get -u github.com/logto-io/go
 ```
 
 ## Packages
