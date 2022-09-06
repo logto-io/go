@@ -69,6 +69,9 @@ func (logtoClient *LogtoClient) SetIdToken(idToken string) {
 }
 
 func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {
+	if !logtoClient.IsAuthenticated() {
+		return core.IdTokenClaims{}, ErrNotAuthenticated
+	}
 	return core.DecodeIdToken(logtoClient.GetIdToken())
 }
 
