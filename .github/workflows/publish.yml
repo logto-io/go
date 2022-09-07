@@ -44,7 +44,7 @@ jobs:
           git status
           git add .
           git status
-          git commit -m \"release: ${{ github.event.inputs.semver }}\" --no-verify -S
+          git commit -m \'release: ${{ github.event.inputs.semver }}\' --no-verify -S
           git status
           git log -2
           git tag ${{ github.event.inputs.semver }}
