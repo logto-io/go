@@ -43,7 +43,9 @@ jobs:
         run: |
           git add .
           git commit -m 'release: ${{ github.event.inputs.semver }}' --no-verify -S
+          git tag ${{ github.event.inputs.semver }}
           git log -2
+          git tag -l
         env:
           GH_TOKEN: ${{ secrets.BOT_PAT }}
       
