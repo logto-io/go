@@ -42,7 +42,7 @@ jobs:
       - name: Commit and tag version
         run: |
           git add .
-          git commit -S -m 'release: ${{ github.event.inputs.semver }}' --no-verify
+          git commit -m 'release: ${{ github.event.inputs.semver }}' --no-verify -S
           git tag -s ${{ github.event.inputs.semver }}
           git log -2
         env:
