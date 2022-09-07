@@ -13,6 +13,7 @@ concurrency:
 jobs:
   create-github-release:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Extract changelog
@@ -32,6 +33,7 @@ jobs:
 
   update-go-module-index:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       # https://pkg.go.dev/about#adding-a-package
