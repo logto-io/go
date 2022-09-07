@@ -43,7 +43,10 @@ jobs:
         run: |
           git status
           git add .
+          git status
           git commit -m \"release: ${{ github.event.inputs.semver }}\" --no-verify -S
+          git status
+          git log -2
           git tag -a ${{ github.event.inputs.semver }} -s
           git log -2
         env:
