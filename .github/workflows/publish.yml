@@ -6,10 +6,6 @@ on:
       semver:
         description: Semver bump type
         required: true
-      preid:
-        description: Pre ID
-        required: true
-        default: alpha
 
 jobs:
   publish:
@@ -32,27 +28,32 @@ jobs:
           git config --global user.email bot@silverhand.io
           git config --global user.name silverhand-bot
 
-      - name: Setup Go Env
-        uses: actions/setup-go@v3
-        with:
-          go-version: '^1.19'
+      # - name: Setup Go Env
+      #   uses: actions/setup-go@v3
+      #   with:
+      #     go-version: '^1.19'
 
-      - name: Generate change log
-        run: |
-          go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
-          git-chglog -o CHANGELOG.md
-
-      - name: Commit and tag version
-        run: |
-          git commit -S -am 'release: ${{ github.event.inputs.semver }}-${{ github.event.inputs.preid }}' --no-verify
-          git tag -s ${{ github.event.inputs.semver }}-${{ github.event.inputs.preid }}
-        env:
-          GH_TOKEN: ${{ secrets.BOT_PAT }}
+      # - name: Generate change log
+      #   run: |
+      #     go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
+      #     git-chglog -o CHANGELOG.md
       
-      - name: Push to protected branch
-        uses: CasperWA/push-protected@v2
-        with:
-          token: ${{ secrets.BOT_PAT }}
-          branch: master
-          tags: true
-          timeout: 20
+      - name: Echo Version
+        run: |
+          echo '${{ github.event.inputs.semver }}'
+          echo 'release: ${{ github.event.inputs.semver }}'
+
+      # - name: Commit and tag version
+      #   run: |
+      #     git commit -S -am 'release: ${{ github.event.inputs.semver }}' --no-verify
+      #     git tag -s ${{ github.event.inputs.semver }}
+      #   env:
+      #     GH_TOKEN: ${{ secrets.BOT_PAT }}
+      
+      # - name: Push to protected branch
+      #   uses: CasperWA/push-protected@v2
+      #   with:
+      #     token: ${{ secrets.BOT_PAT }}
+      #     branch: master
+      #     tags: true
+      #     timeout: 20
