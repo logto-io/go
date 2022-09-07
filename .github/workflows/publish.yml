@@ -41,13 +41,8 @@ jobs:
 
       - name: Commit and tag version
         run: |
-          git status
           git add .
-          git status
-          git commit -m \'release: ${{ github.event.inputs.semver }}\' --no-verify -S
-          git status
-          git log -2
-          git tag ${{ github.event.inputs.semver }}
+          git commit -m release: ${{ github.event.inputs.semver }} --no-verify -S
           git log -2
         env:
           GH_TOKEN: ${{ secrets.BOT_PAT }}
