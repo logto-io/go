@@ -39,20 +39,18 @@ jobs:
           go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
           git-chglog -o CHANGELOG.md
 
-      - name: Commit and tag version
+      - name: Commit change and tag version
         run: |
           git add .
           git commit -m 'release: ${{ github.event.inputs.semver }}' --no-verify -S
           git tag ${{ github.event.inputs.semver }} -m 'release: ${{ github.event.inputs.semver }}' -s
-          git log -2
-          git tag -l
         env:
           GH_TOKEN: ${{ secrets.BOT_PAT }}
       
-      # - name: Push to protected branch
-      #   uses: CasperWA/push-protected@v2
-      #   with:
-      #     token: ${{ secrets.BOT_PAT }}
-      #     branch: master
-      #     tags: true
-      #     timeout: 20
+      - name: Push to protected branch
+        uses: CasperWA/push-protected@v2
+        with:
+          token: ${{ secrets.BOT_PAT }}
+          branch: master
+          tags: true
+          timeout: 20
