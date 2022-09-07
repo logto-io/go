@@ -64,9 +64,7 @@ func TestHandleSignInCallbackShouldHandleCallbackCorrectly(t *testing.T) {
 		},
 	}
 
-	logtoClient := NewLogtoClient(&LogtoConfig{
-		Resources: []string{""},
-	}, storage)
+	logtoClient := NewLogtoClient(&LogtoConfig{}, storage)
 
 	signInCallbackRequest, createSignInCallbackRequestErr := http.NewRequest("GET", "https://example.com/sign-in-callback", nil)
 	assert.Nil(t, createSignInCallbackRequestErr)

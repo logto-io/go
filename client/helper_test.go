@@ -66,9 +66,7 @@ func TestFetchOidcConfigShouldReturnExpectedOidcConfig(t *testing.T) {
 func TestLoadAccessTokenMapShouldLoadAccessTokenMapFromStorage(t *testing.T) {
 	expiresAt := time.Now().Unix() + 60
 
-	logtoConfig := &LogtoConfig{
-		Resources: []string{"testResource"},
-	}
+	logtoConfig := &LogtoConfig{}
 
 	testStorage := &TestStorage{
 		data: map[string]string{
@@ -152,10 +150,7 @@ func TestVerifyAndSaveTokenResponseShouldSaveToken(t *testing.T) {
 
 	defer patchesForVerifyIdToken.Reset()
 
-	logtoClient := NewLogtoClient(&LogtoConfig{
-		// TODO: do not check granted resource if resource is empty
-		Resources: []string{""},
-	}, &TestStorage{
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{
 		data: map[string]string{},
 	})
 

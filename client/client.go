@@ -87,9 +87,10 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 		return AccessToken{}, ErrNotAuthenticated
 	}
 
-	// TODO: do not check granted resource if resource is empty
-	if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
-		return AccessToken{}, ErrUnacknowledgedResourceFound
+	if resource != "" {
+		if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
+			return AccessToken{}, ErrUnacknowledgedResourceFound
+		}
 	}
 
 	accessTokenKey := buildAccessTokenKey([]string{}, resource)
