@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/agiledragon/gomonkey/v2"
-	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -45,12 +45,12 @@ func (storage *TestStorage) SetItem(key, value string) {
 }
 
 func TestFetchOidcConfigShouldReturnExpectedOidcConfig(t *testing.T) {
-	wantedOidcConfig := core.OidcConfigResponse{
+	testOidcConfig := core.OidcConfigResponse{
 		AuthorizationEndpoint: "testAuthorizationEndpoint",
 	}
 
 	patches := gomonkey.ApplyFunc(core.FetchOidcConfig, func(client *http.Client, endpoint string) (core.OidcConfigResponse, error) {
-		return wantedOidcConfig, nil
+		return testOidcConfig, nil
 	})
 	defer patches.Reset()
 
@@ -58,23 +58,15 @@ func TestFetchOidcConfigShouldReturnExpectedOidcConfig(t *testing.T) {
 		Endpoint: "https://example.com",
 	}, &TestStorage{})
 
-	gotOidcConfig, fetchOidcConfigError := logtClient.fetchOidcConfig()
-
-	if fetchOidcConfigError != nil {
-		t.Fatal(fetchOidcConfigError)
-	}
-
-	if !cmp.Equal(gotOidcConfig, wantedOidcConfig) {
-		t.Fatalf("Expected Oidc Config: %v\nActual Oidc Config : %v", wantedOidcConfig, gotOidcConfig)
-	}
+	oidcConfig, fetchOidcConfigError := logtClient.fetchOidcConfig()
+	assert.Nil(t, fetchOidcConfigError)
+	assert.Equal(t, testOidcConfig, oidcConfig)
 }
 
 func TestLoadAccessTokenMapShouldLoadAccessTokenMapFromStorage(t *testing.T) {
 	expiresAt := time.Now().Unix() + 60
 
-	logtoConfig := &LogtoConfig{
-		Resources: []string{"testResource"},
-	}
+	logtoConfig := &LogtoConfig{}
 
 	testStorage := &TestStorage{
 		data: map[string]string{
@@ -83,7 +75,7 @@ func TestLoadAccessTokenMapShouldLoadAccessTokenMapFromStorage(t *testing.T) {
 		},
 	}
 
-	wantedAccessToken := AccessToken{
+	testAccessToken := AccessToken{
 		Token:     "token",
 		Scope:     "scope",
 		ExpiresAt: expiresAt,
@@ -93,11 +85,9 @@ func TestLoadAccessTokenMapShouldLoadAccessTokenMapFromStorage(t *testing.T) {
 
 	logtoClient.loadAccessTokenMap()
 
-	got := logtoClient.accessTokenMap["@testResource"]
+	accessToken := logtoClient.accessTokenMap["@testResource"]
 
-	if !cmp.Equal(got, wantedAccessToken) {
-		t.Fatalf("Expected Access Token : %v\nActual Access Token : %v", wantedAccessToken, got)
-	}
+	assert.Equal(t, testAccessToken, accessToken)
 }
 
 func TestPersistAccessTokenMapShouldSaveAccessTokenMapDataToStorage(t *testing.T) {
@@ -114,15 +104,13 @@ func TestPersistAccessTokenMapShouldSaveAccessTokenMapDataToStorage(t *testing.T
 		ExpiresAt: 1000,
 	}
 
-	wantedAccessTokenMapContent := `{"accessTokenKey":{"token":"token","scope":"scope","expiresAt":1000}}`
+	testAccessTokenMapContent := `{"accessTokenKey":{"token":"token","scope":"scope","expiresAt":1000}}`
 
 	logtoClient.persistAccessTokenMap()
 
-	got := testStorage.GetItem(StorageKeyAccessTokenMap)
+	accessTokenMapContent := testStorage.GetItem(StorageKeyAccessTokenMap)
 
-	if got != wantedAccessTokenMapContent {
-		t.Fatalf("Expected Access Token Map Content: %v\nActual Access Token Map Content: %v", wantedAccessTokenMapContent, got)
-	}
+	assert.Equal(t, testAccessTokenMapContent, accessTokenMapContent)
 }
 
 func TestCreateRemoteJwksShouldCreateExpectedJwks(t *testing.T) {
@@ -145,16 +133,8 @@ func TestCreateRemoteJwksShouldCreateExpectedJwks(t *testing.T) {
 	logtoClient.httpClient = client
 
 	jwks, createRemoteJwksErr := logtoClient.createRemoteJwks(jwksUri)
-
-	if createRemoteJwksErr != nil {
-		t.Fatal(createRemoteJwksErr)
-	}
-
-	jwksKeySize := len(jwks.Keys)
-
-	if len(jwks.Keys) != 2 {
-		t.Fatalf("Expected key size of JWKS: %d\nActual key size of JWKS: %d", 2, jwksKeySize)
-	}
+	assert.Nil(t, createRemoteJwksErr)
+	assert.Equal(t, 2, len(jwks.Keys))
 }
 
 func TestVerifyAndSaveTokenResponseShouldSaveToken(t *testing.T) {
@@ -170,38 +150,21 @@ func TestVerifyAndSaveTokenResponseShouldSaveToken(t *testing.T) {
 
 	defer patchesForVerifyIdToken.Reset()
 
-	logtoClient := NewLogtoClient(&LogtoConfig{
-		// TODO: do not check granted resource if resource is empty
-		Resources: []string{""},
-	}, &TestStorage{
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{
 		data: map[string]string{},
 	})
 
-	wantedIdToken := "idToken"
-	wantedRefreshToken := "refreshToken"
-	wantedAccessToken := AccessToken{Token: "testToken", Scope: "read", ExpiresAt: time.Now().Unix() + 60}
+	testIdToken := "idToken"
+	testRefreshToken := "refreshToken"
+	testAccessToken := AccessToken{Token: "testToken", Scope: "read", ExpiresAt: time.Now().Unix() + 60}
 
-	err := logtoClient.verifyAndSaveTokenResponse(wantedIdToken, wantedRefreshToken, wantedAccessToken, &core.OidcConfigResponse{})
-	if err != nil {
-		t.Fatal(err)
-	}
+	verifyAndSaveTokenResponseErr := logtoClient.verifyAndSaveTokenResponse(testIdToken, testRefreshToken, testAccessToken, &core.OidcConfigResponse{})
+	assert.Nil(t, verifyAndSaveTokenResponseErr)
 
-	gotIdToken := logtoClient.GetIdToken()
-	if logtoClient.GetIdToken() != "idToken" {
-		t.Fatalf("Expected id token: %s\nActual id token: %v", wantedIdToken, gotIdToken)
-	}
+	assert.Equal(t, testIdToken, logtoClient.GetIdToken())
+	assert.Equal(t, testRefreshToken, logtoClient.GetRefreshToken())
 
-	gotRefreshToken := logtoClient.GetRefreshToken()
-	if logtoClient.GetIdToken() != "idToken" {
-		t.Fatalf("Expected id token: %s\nActual id token: %v", wantedRefreshToken, gotRefreshToken)
-	}
-
-	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
-	if getAccessTokenErr != nil {
-		t.Fatal(getAccessTokenErr)
-	}
-
-	if !cmp.Equal(gotAccessToken, wantedAccessToken) {
-		t.Fatalf("Expected Access Token : %v\nActual Access Token : %v", wantedAccessToken, gotAccessToken)
-	}
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken)
 }

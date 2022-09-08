@@ -6,7 +6,7 @@ import (
 	"github.com/logto-io/go/core"
 )
 
-type SignInContext struct {
+type SignInSession struct {
 	RedirectUri   string
 	CodeVerifier  string
 	CodeChallenge string
@@ -39,19 +39,19 @@ func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
 		return "", generateSignInUriErr
 	}
 
-	signInContext := SignInContext{
+	signInSession := SignInSession{
 		RedirectUri:   redirectUri,
 		CodeVerifier:  codeVerifier,
 		CodeChallenge: codeChallenge,
 		State:         state,
 	}
 
-	signInContextJsonValue, marshalErr := json.Marshal(signInContext)
+	signInSessionJsonValue, marshalErr := json.Marshal(signInSession)
 	if marshalErr != nil {
 		return "", marshalErr
 	}
 
-	logtoClient.storage.SetItem(StorageKeySignInContext, string(signInContextJsonValue))
+	logtoClient.storage.SetItem(StorageKeySignInSession, string(signInSessionJsonValue))
 
 	return signInUri, nil
 }

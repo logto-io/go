@@ -6,6 +6,7 @@ import (
 
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
@@ -46,29 +47,12 @@ func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
 		"key": {Token: "abc"},
 	}
 
-	gotSignOutUri, signOutErr := logtoClient.SignOut("https://example.com/home")
+	signOutUri, signOutErr := logtoClient.SignOut("https://example.com/home")
+	assert.Nil(t, signOutErr)
+	assert.Equal(t, testSignOutUri, signOutUri)
 
-	if signOutErr != nil {
-		t.Fatal(signOutErr)
-	}
-
-	if gotSignOutUri != testSignOutUri {
-		t.Fatalf("Expected sign-out URI : %v\nActual sign-out URI : %v", testSignOutUri, gotSignOutUri)
-	}
-
-	if storage.GetItem(StorageKeyIdToken) != "" {
-		t.Fatal("id token has not cleared")
-	}
-
-	if storage.GetItem(StorageKeyRefreshToken) != "" {
-		t.Fatal("refresh token has not cleared")
-	}
-
-	if storage.GetItem(StorageKeyAccessTokenMap) != "" {
-		t.Fatal("persisted access token map token has not cleared")
-	}
-
-	if len(logtoClient.accessTokenMap) != 0 {
-		t.Fatal("persisted access token map token has not cleared")
-	}
+	assert.Equal(t, 0, len(logtoClient.accessTokenMap))
+	assert.Equal(t, "", storage.GetItem(StorageKeyIdToken))
+	assert.Equal(t, "", storage.GetItem(StorageKeyRefreshToken))
+	assert.Equal(t, "", storage.GetItem(StorageKeyAccessTokenMap))
 }

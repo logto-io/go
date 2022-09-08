@@ -2,12 +2,14 @@ package core
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=login&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=login&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
 
-	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
+	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
 		ClientId:              "clientId",
 		RedirectUri:           "https://example.com/callback",
@@ -18,19 +20,14 @@ func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
 		Prompt:                "login",
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signInUri != expectedSignInUri {
-		t.Errorf("Expected %s, got %s", expectedSignInUri, signInUri)
-	}
+	assert.Nil(t, generateSignInUriErr)
+	assert.Equal(t, testSignInUri, signInUri)
 }
 
 func TestGenerateSignInUriShouldContainReservedScopesByDefault(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
 
-	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
+	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
 		ClientId:              "clientId",
 		RedirectUri:           "https://example.com/callback",
@@ -40,19 +37,14 @@ func TestGenerateSignInUriShouldContainReservedScopesByDefault(t *testing.T) {
 		Prompt:                "consent",
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signInUri != expectedSignInUri {
-		t.Errorf("Expected %s, got %s", expectedSignInUri, signInUri)
-	}
+	assert.Nil(t, generateSignInUriErr)
+	assert.Equal(t, testSignInUri, signInUri)
 }
 
 func TestGenerateSignInUriShouldContainReservedScopesAndExtraScopes(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile extra_scope&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile extra_scope&state=state"
 
-	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
+	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
 		ClientId:              "clientId",
 		RedirectUri:           "https://example.com/callback",
@@ -63,19 +55,14 @@ func TestGenerateSignInUriShouldContainReservedScopesAndExtraScopes(t *testing.T
 		Prompt:                "consent",
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signInUri != expectedSignInUri {
-		t.Errorf("Expected %s, got %s", expectedSignInUri, signInUri)
-	}
+	assert.Nil(t, generateSignInUriErr)
+	assert.Equal(t, testSignInUri, signInUri)
 }
 
 func TestGenerateSignInUriShouldGenerateUriWithConsentAsThePromptValue(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
 
-	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
+	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
 		ClientId:              "clientId",
 		RedirectUri:           "https://example.com/callback",
@@ -85,19 +72,14 @@ func TestGenerateSignInUriShouldGenerateUriWithConsentAsThePromptValue(t *testin
 		Resources:             []string{"resourceA", "resourceB"},
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signInUri != expectedSignInUri {
-		t.Errorf("Expected %s, got %s", expectedSignInUri, signInUri)
-	}
+	assert.Nil(t, generateSignInUriErr)
+	assert.Equal(t, testSignInUri, signInUri)
 }
 
 func TestGenerateSignInUriShouldNotContainResourcesIfNoResourcesAreProvided(t *testing.T) {
-	expectedSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&response_type=code&scope=openid offline_access profile&state=state"
 
-	signInUri, err := GenerateSignInUri(&SignInUriGenerationOptions{
+	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
 		ClientId:              "clientId",
 		RedirectUri:           "https://example.com/callback",
@@ -106,11 +88,6 @@ func TestGenerateSignInUriShouldNotContainResourcesIfNoResourcesAreProvided(t *t
 		Scopes:                []string{"openid", "offline_access", "profile"},
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if signInUri != expectedSignInUri {
-		t.Errorf("Expected %s, got %s", expectedSignInUri, signInUri)
-	}
+	assert.Nil(t, generateSignInUriErr)
+	assert.Equal(t, testSignInUri, signInUri)
 }

@@ -9,15 +9,15 @@ import (
 )
 
 func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) error {
-	signInContext := SignInContext{}
-	parseSignInContextErr := json.Unmarshal([]byte(logtoClient.storage.GetItem(StorageKeySignInContext)), &signInContext)
+	signInSession := SignInSession{}
+	parseSignInSessionErr := json.Unmarshal([]byte(logtoClient.storage.GetItem(StorageKeySignInSession)), &signInSession)
 
-	if parseSignInContextErr != nil {
-		return parseSignInContextErr
+	if parseSignInSessionErr != nil {
+		return parseSignInSessionErr
 	}
 
 	callbackUri := GetOriginRequestUrl(request)
-	code, retrieveCodeErr := core.VerifyAndParseCodeFromCallbackUri(callbackUri, signInContext.RedirectUri, signInContext.State)
+	code, retrieveCodeErr := core.VerifyAndParseCodeFromCallbackUri(callbackUri, signInSession.RedirectUri, signInSession.State)
 	if retrieveCodeErr != nil {
 		return retrieveCodeErr
 	}
@@ -31,16 +31,16 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 	codeTokenResponse, fetchTokenErr := core.FetchTokenByAuthorizationCode(logtoClient.httpClient, &core.FetchTokenByAuthorizationCodeOptions{
 		TokenEndpoint: oidcConfig.TokenEndpoint,
 		Code:          code,
-		CodeVerifier:  signInContext.CodeVerifier,
+		CodeVerifier:  signInSession.CodeVerifier,
 		ClientId:      logtoClient.logtoConfig.AppId,
-		RedirectUri:   signInContext.RedirectUri,
+		RedirectUri:   signInSession.RedirectUri,
 	})
 
 	if fetchTokenErr != nil {
 		return fetchTokenErr
 	}
 
-	logtoClient.storage.SetItem(StorageKeySignInContext, "")
+	logtoClient.storage.SetItem(StorageKeySignInSession, "")
 
 	accessToken := AccessToken{
 		Token:     codeTokenResponse.AccessToken,

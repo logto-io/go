@@ -1,28 +1,25 @@
 package client
 
 import (
-	"errors"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/agiledragon/gomonkey/v2"
-	"github.com/google/go-cmp/cmp"
 	"github.com/logto-io/go/core"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/square/go-jose.v2"
 )
 
 func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T) {
-	wantedAccessToken := AccessToken{
+	testAccessToken := AccessToken{
 		Token:     "accessToken",
 		Scope:     "openid",
 		ExpiresAt: time.Now().Unix() + 60,
 	}
 
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken: "id token",
@@ -30,24 +27,17 @@ func TestGetAccessTokenShouldReturnAccessTokenAccessTokenInTokenMap(t *testing.T
 		},
 	)
 
-	logtoClient.accessTokenMap["@"] = wantedAccessToken
+	logtoClient.accessTokenMap["@"] = testAccessToken
 
-	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	if getAccessTokenErr != nil {
-		t.Fatal(getAccessTokenErr)
-	}
-
-	if !cmp.Equal(gotAccessToken, wantedAccessToken) {
-		t.Fatalf("Expected Access Token : %v\nActual Access Token : %v", wantedAccessToken, gotAccessToken)
-	}
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken)
 }
 
 func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *testing.T) {
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken: "",
@@ -55,13 +45,9 @@ func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *te
 		},
 	)
 
-	_, gotErr := logtoClient.GetAccessToken("")
+	_, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	wantedErr := errors.New("not authenticated")
-
-	if !cmp.Equal(gotErr.Error(), wantedErr.Error()) {
-		t.Fatalf("Expected Error : %s\nActual Error : %s", wantedErr.Error(), gotErr.Error())
-	}
+	assert.Equal(t, ErrNotAuthenticated, getAccessTokenErr)
 }
 
 func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIfLocalAccessTokenIsExpired(t *testing.T) {
@@ -105,9 +91,7 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 	defer patchesForVerifyIdToken.Reset()
 
 	logtoClient := NewLogtoClient(
-		&LogtoConfig{
-			Resources: []string{""},
-		},
+		&LogtoConfig{},
 		&TestStorage{
 			data: map[string]string{
 				StorageKeyIdToken:      "id token",
@@ -124,19 +108,52 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 
 	logtoClient.accessTokenMap["@"] = expiredAccessToken
 
-	gotAccessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
 
-	if getAccessTokenErr != nil {
-		t.Fatal(getAccessTokenErr)
+	assert.Nil(t, getAccessTokenErr)
+	assert.Equal(t, testAccessToken, accessToken.Token)
+	assert.Equal(t, testAccessToken, logtoClient.accessTokenMap["@"].Token)
+}
+
+func TestGetIdTokenClaimsShouldReturnIdTokenClaimsCorrectly(t *testing.T) {
+	testIdTokenClaims := core.IdTokenClaims{
+		Sub: "testSub",
 	}
 
-	if gotAccessToken.Token != testAccessToken {
-		t.Fatalf("Expected access token : %s\nActual access token : %s", testAccessToken, gotAccessToken.Token)
-	}
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return true
+	})
+	defer patchesForIsAuthenticated.Reset()
 
-	updatedAccessToken := logtoClient.accessTokenMap["@"]
+	patchesForGetIdToken := gomonkey.ApplyPrivateMethod(logtoClientSpy, "GetIdToken", func(_ *LogtoClient) string {
+		return "idToken"
+	})
+	defer patchesForGetIdToken.Reset()
 
-	if updatedAccessToken.Token != testAccessToken {
-		t.Fatalf("Local access token have not been updated, want : %s\ngot : %s", testAccessToken, updatedAccessToken.Token)
-	}
+	patchesForDecodeIdToken := gomonkey.ApplyFunc(core.DecodeIdToken, func(token string) (core.IdTokenClaims, error) {
+		return testIdTokenClaims, nil
+	})
+	defer patchesForDecodeIdToken.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	idTokenClaims, getIdTokenClaimsErr := logtoClient.GetIdTokenClaims()
+
+	assert.Nil(t, getIdTokenClaimsErr)
+	assert.Equal(t, testIdTokenClaims, idTokenClaims)
+}
+
+func TestGetIdTokenClaimsShouldReturnNotAuthenticatedErrorIfUserIsNotAuthenticated(t *testing.T) {
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return false
+	})
+	defer patchesForIsAuthenticated.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	_, getIdTokenClaimsErr := logtoClient.GetIdTokenClaims()
+
+	assert.Equal(t, ErrNotAuthenticated, getIdTokenClaimsErr)
 }

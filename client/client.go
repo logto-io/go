@@ -69,6 +69,9 @@ func (logtoClient *LogtoClient) SetIdToken(idToken string) {
 }
 
 func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {
+	if !logtoClient.IsAuthenticated() {
+		return core.IdTokenClaims{}, ErrNotAuthenticated
+	}
 	return core.DecodeIdToken(logtoClient.GetIdToken())
 }
 
@@ -84,9 +87,10 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 		return AccessToken{}, ErrNotAuthenticated
 	}
 
-	// TODO: do not check granted resource if resource is empty
-	if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
-		return AccessToken{}, ErrUnacknowledgedResourceFound
+	if resource != "" {
+		if !slices.Contains(logtoClient.logtoConfig.Resources, resource) {
+			return AccessToken{}, ErrUnacknowledgedResourceFound
+		}
 	}
 
 	accessTokenKey := buildAccessTokenKey([]string{}, resource)
