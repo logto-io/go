@@ -15,11 +15,10 @@ var (
 
 func main() {
 	logtoConfig := &client.LogtoConfig{
-		Endpoint:           "http://localhost:3001",
-		AppId:              "wkMqPInVTZL0Ys4K3POl7",
-		AppSecret:          "71kbRPQ1NAVA08IBStipz",
-		Resources:          []string{"https://api.logto.io"},
-		PersistAccessToken: true,
+		Endpoint:  "http://localhost:3001",
+		AppId:     "wkMqPInVTZL0Ys4K3POl7",
+		AppSecret: "71kbRPQ1NAVA08IBStipz",
+		Resources: []string{"https://api.logto.io"},
 	}
 
 	store := memstore.NewStore([]byte("secret"))
