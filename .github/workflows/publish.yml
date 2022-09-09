@@ -34,11 +34,6 @@ jobs:
         with:
           go-version: '^1.19'
 
-      - name: Generate change log
-        run: |
-          go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
-          git-chglog -o CHANGELOG.md
-
       - name: Commit change log and tag version
         run: |
           git add .
@@ -46,7 +41,12 @@ jobs:
           git tag ${{ github.event.inputs.semver }} -m 'release: ${{ github.event.inputs.semver }}' -s
         env:
           GH_TOKEN: ${{ secrets.BOT_PAT }}
-      
+
+      - name: Generate change log
+        run: |
+          go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.1
+          git-chglog -o CHANGELOG.md
+
       - name: Push to protected branch
         uses: CasperWA/push-protected@v2
         with:
