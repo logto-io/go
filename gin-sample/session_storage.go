@@ -4,11 +4,11 @@ import (
 	"github.com/gin-contrib/sessions"
 )
 
-type Storage struct {
+type SessionStorage struct {
 	session sessions.Session
 }
 
-func (storage *Storage) GetItem(key string) string {
+func (storage *SessionStorage) GetItem(key string) string {
 	value := storage.session.Get(key)
 	if value == nil {
 		return ""
@@ -16,7 +16,7 @@ func (storage *Storage) GetItem(key string) string {
 	return value.(string)
 }
 
-func (storage *Storage) SetItem(key, value string) {
+func (storage *SessionStorage) SetItem(key, value string) {
 	storage.session.Set(key, value)
 	storage.session.Save()
 }
