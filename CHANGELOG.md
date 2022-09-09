@@ -1,5 +1,24 @@
 # Changelog
 
+## [v0.1.3](https://github.com/logto-io/go/compare/v0.1.2...v0.1.3) (2022-09-09)
+
+### Feat
+
+* **client:** persist access tokens all the time ([#45](https://github.com/logto-io/go/issues/45))
+
+### Fix
+
+* **deps:** update golang.org/x/exp digest to 145caa8 ([#41](https://github.com/logto-io/go/issues/41))
+
+### Refactor
+
+* **gin-sample:** rename storage -> `session_storage` ([#24](https://github.com/logto-io/go/issues/24))
+
+### Release
+
+* v0.1.3
+
+
 ## [v0.1.2](https://github.com/logto-io/go/compare/v0.1.1...v0.1.2) (2022-09-07)
 
 ### Chore
