@@ -16,8 +16,6 @@ type LogtoConfig struct {
 	Scopes    []string
 	Resources []string
 	Prompt    string
-	// TODO: Find a way to make this value default to true
-	PersistAccessToken bool
 }
 
 type AccessToken struct {
@@ -41,9 +39,7 @@ func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 		accessTokenMap: make(map[string]AccessToken),
 	}
 
-	if config.PersistAccessToken {
-		logtoClient.loadAccessTokenMap()
-	}
+	logtoClient.loadAccessTokenMap()
 
 	return &logtoClient
 }
@@ -77,9 +73,7 @@ func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {
 
 func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessToken) {
 	logtoClient.accessTokenMap[key] = accessToken
-	if logtoClient.logtoConfig.PersistAccessToken {
-		logtoClient.persistAccessTokenMap()
-	}
+	logtoClient.persistAccessTokenMap()
 }
 
 func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, error) {
