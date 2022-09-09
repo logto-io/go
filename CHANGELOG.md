@@ -1,5 +1,27 @@
 # Changelog
 
+## [v0.1.2](https://github.com/logto-io/go/compare/v0.1.1...v0.1.2) (2022-09-07)
+
+### Chore
+
+* add readme ([#39](https://github.com/logto-io/go/issues/39))
+
+### Ci
+
+* run main workflow on `push-action` branches ([#44](https://github.com/logto-io/go/issues/44))
+* run release workflow only on tag pushed ([#43](https://github.com/logto-io/go/issues/43))
+* add publish workflow ([#42](https://github.com/logto-io/go/issues/42))
+
+### Fix
+
+* **client:** skip resource check in `GetAccessToken` when resource is empty string ([#38](https://github.com/logto-io/go/issues/38))
+* **client:** `GetIdTokenClaims` should return `ErrNotAuthenticated` if the user is not authenticated ([#37](https://github.com/logto-io/go/issues/37))
+
+### Release
+
+* v0.1.2
+
+
 ## v0.1.1 (2022-09-06)
 
 ### Chore
