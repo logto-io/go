@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.1.4](https://github.com/logto-io/go/compare/v0.1.3...v0.1.4) (2022-09-09)
+
+### Chore
+
+* update changelog ([#46](https://github.com/logto-io/go/issues/46))
+
+### Ci
+
+* generate the change log after the commit is tagged ([#47](https://github.com/logto-io/go/issues/47))
+
+
 ## [v0.1.3](https://github.com/logto-io/go/compare/v0.1.2...v0.1.3) (2022-09-09)
 
 ### Feat
