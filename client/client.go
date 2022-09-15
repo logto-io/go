@@ -141,3 +141,23 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 
 	return refreshedAccessToken, nil
 }
+
+func (logtoClient *LogtoClient) FetchUserInfo() (core.UserInfoResponse, error) {
+	if !logtoClient.IsAuthenticated() {
+		return core.UserInfoResponse{}, ErrNotAuthenticated
+	}
+
+	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
+
+	if fetchOidcConfigErr != nil {
+		return core.UserInfoResponse{}, fetchOidcConfigErr
+	}
+
+	accessToken, getAccessTokenErr := logtoClient.GetAccessToken("")
+
+	if getAccessTokenErr != nil {
+		return core.UserInfoResponse{}, getAccessTokenErr
+	}
+
+	return core.FetchUserInfo(logtoClient.httpClient, oidcConfig.UserinfoEndpoint, accessToken.Token)
+}

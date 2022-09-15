@@ -3,6 +3,7 @@ package core
 type OidcConfigResponse struct {
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
 	TokenEndpoint         string `json:"token_endpoint"`
+	UserinfoEndpoint      string `json:"userinfo_endpoint"`
 	EndSessionEndpoint    string `json:"end_session_endpoint"`
 	RevocationEndpoint    string `json:"revocation_endpoint"`
 	JwksUri               string `json:"jwks_uri"`
@@ -18,6 +19,20 @@ type CodeTokenResponse struct {
 }
 
 type RefreshTokenResponse = CodeTokenResponse
+
+type UserInfoResponse struct {
+	Sub                 string                 `json:"sub"`
+	Name                string                 `json:"name"`
+	Username            string                 `json:"username"`
+	Picture             string                 `json:"picture"`
+	RoleNames           []string               `json:"role_names"`
+	Email               string                 `json:"email"`
+	EmailVerified       bool                   `json:"email_verified"`
+	PhoneNumber         string                 `json:"phone_number"`
+	PhoneNumberVerified bool                   `json:"phone_number_verified"`
+	CustomData          map[string]interface{} `json:"custom_data"`
+	Identities          map[string]interface{} `json:"identities"`
+}
 
 type IdTokenClaims struct {
 	Sub       string   `json:"sub"`
