@@ -6,7 +6,11 @@ import (
 )
 
 var (
-	reservedScopes = []string{"openid", "offline_access", "profile"}
+	defaultScopes = []string{
+		PreservedScopeOpenId,
+		PreservedScopeOfflineAccess,
+		UserScopeProfile,
+	}
 )
 
 type SignInUriGenerationOptions struct {
@@ -36,8 +40,8 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 	queries.Add("state", option.State)
 
 	scopes := option.Scopes
-	for _, scope := range reservedScopes {
-		scopes = appendScopeIfNotExisted(scopes, scope)
+	for _, defaultScope := range defaultScopes {
+		scopes = appendScopeIfNotExisted(scopes, defaultScope)
 	}
 
 	queries.Add("scope", strings.Join(scopes, " "))
