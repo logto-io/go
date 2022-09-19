@@ -1,8 +1,8 @@
 package core
 
 var (
-	PreservedScopeOpenId        = "openid"
-	PreservedScopeOfflineAccess = "offline_access"
+	ReservedScopeOpenId        = "openid"
+	ReservedScopeOfflineAccess = "offline_access"
 )
 
 var (

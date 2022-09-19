@@ -7,8 +7,8 @@ import (
 
 var (
 	defaultScopes = []string{
-		PreservedScopeOpenId,
-		PreservedScopeOfflineAccess,
+		ReservedScopeOpenId,
+		ReservedScopeOfflineAccess,
 		UserScopeProfile,
 	}
 )
