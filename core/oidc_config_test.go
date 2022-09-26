@@ -17,6 +17,7 @@ func TestFetchOidcConfig(t *testing.T) {
 	mockResponse := `{` +
 		`"authorization_endpoint": "http://example.com/oidc/authorize",` +
 		`"token_endpoint": "http://example.com/oidc/token",` +
+		`"userinfo_endpoint": "http://example.com/oidc/me",` +
 		`"end_session_endpoint": "http://example.com/oidc/logout",` +
 		`"revocation_endpoint": "http://example.com/oidc/revoke",` +
 		`"jwks_uri": "http://example.com/oidc/jwks",` +

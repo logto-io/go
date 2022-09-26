@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 	"time"
@@ -156,4 +157,100 @@ func TestGetIdTokenClaimsShouldReturnNotAuthenticatedErrorIfUserIsNotAuthenticat
 	_, getIdTokenClaimsErr := logtoClient.GetIdTokenClaims()
 
 	assert.Equal(t, ErrNotAuthenticated, getIdTokenClaimsErr)
+}
+
+func TestFetchUserInfoShouldReturnCorrectUserInfoResponse(t *testing.T) {
+	testUserInfoResponse := core.UserInfoResponse{
+		Sub:      "sub",
+		Username: "username",
+	}
+
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return true
+	})
+	defer patchesForIsAuthenticated.Reset()
+
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		return core.OidcConfigResponse{}, nil
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
+	patchesForGetAccessToken := gomonkey.ApplyPrivateMethod(logtoClientSpy, "GetAccessToken", func(_ *LogtoClient) (AccessToken, error) {
+		return AccessToken{}, nil
+	})
+	defer patchesForGetAccessToken.Reset()
+
+	patchesCoreFetchUserInfo := gomonkey.ApplyFunc(core.FetchUserInfo, func(client *http.Client, userInfoEndpoint, accessToken string) (core.UserInfoResponse, error) {
+		return testUserInfoResponse, nil
+	})
+	defer patchesCoreFetchUserInfo.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	userInfoResponse, fetchUserInfoResponseErr := logtoClient.FetchUserInfo()
+
+	assert.Nil(t, fetchUserInfoResponseErr)
+	assert.Equal(t, testUserInfoResponse, userInfoResponse)
+}
+
+func TestFetchUserInfoShouldReturnNotAuthenticatedErrorIfUserIsNotAuthenticated(t *testing.T) {
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return false
+	})
+	defer patchesForIsAuthenticated.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	_, fetchUserInfoErr := logtoClient.FetchUserInfo()
+
+	assert.Equal(t, ErrNotAuthenticated, fetchUserInfoErr)
+}
+
+func TestFetchUserInfoShouldReturnErrorIfFetchOidcConfigFailed(t *testing.T) {
+	testFetchOidcConfigErr := errors.New("fetch oidc config error")
+
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return true
+	})
+	defer patchesForIsAuthenticated.Reset()
+
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		return core.OidcConfigResponse{}, testFetchOidcConfigErr
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	_, fetchUserInfoErr := logtoClient.FetchUserInfo()
+
+	assert.Equal(t, testFetchOidcConfigErr, fetchUserInfoErr)
+}
+
+func TestFetchUserInfoShouldReturnErrorIfGetAccessTokenFailed(t *testing.T) {
+	testGetAccessTokenErr := errors.New("get access token error")
+
+	var logtoClientSpy *LogtoClient
+	patchesForIsAuthenticated := gomonkey.ApplyPrivateMethod(logtoClientSpy, "IsAuthenticated", func(_ *LogtoClient) bool {
+		return true
+	})
+	defer patchesForIsAuthenticated.Reset()
+
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		return core.OidcConfigResponse{}, nil
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
+	patchesForGetAccessToken := gomonkey.ApplyPrivateMethod(logtoClientSpy, "GetAccessToken", func(_ *LogtoClient) (AccessToken, error) {
+		return AccessToken{}, testGetAccessTokenErr
+	})
+	defer patchesForGetAccessToken.Reset()
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	_, fetchUserInfoErr := logtoClient.FetchUserInfo()
+
+	assert.Equal(t, testGetAccessTokenErr, fetchUserInfoErr)
 }
