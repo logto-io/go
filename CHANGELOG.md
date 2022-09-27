@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.1.5](https://github.com/logto-io/go/compare/v0.1.4...v0.1.5) (2022-09-26)
+
+### Ci
+
+* checkout repo before extract change log in release workflow ([#49](https://github.com/logto-io/go/issues/49))
+
+### Feat
+
+* fetch user info ([#51](https://github.com/logto-io/go/issues/51))
+
+
 ## [v0.1.4](https://github.com/logto-io/go/compare/v0.1.3...v0.1.4) (2022-09-09)
 
 ### Chore
@@ -9,6 +20,10 @@
 ### Ci
 
 * generate the change log after the commit is tagged ([#47](https://github.com/logto-io/go/issues/47))
+
+### Release
+
+* v0.1.4
 
 
 ## [v0.1.3](https://github.com/logto-io/go/compare/v0.1.2...v0.1.3) (2022-09-09)
