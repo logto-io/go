@@ -106,16 +106,11 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 		return AccessToken{}, fetchOidcConfigErr
 	}
 
-	var scopes []string
-	if resource != "" {
-		scopes = append(scopes, "offline_access")
-	}
-
 	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshToken(logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
 		TokenEndpoint: oidcConfig.TokenEndpoint,
 		ClientId:      logtoClient.logtoConfig.AppId,
 		RefreshToken:  refreshToken,
-		Scopes:        scopes,
+		Scopes:        []string{},
 	})
 
 	if refreshTokenErr != nil {
