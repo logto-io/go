@@ -1,6 +1,13 @@
 # Changelog
 
-## [v0.1.5](https://github.com/logto-io/go/compare/v0.1.4...v0.1.5) (2022-09-26)
+## [v1.0.0-rc.0](https://github.com/logto-io/go/compare/v0.1.5...v1.0.0-rc.0) (2023-01-19)
+
+### Feat
+
+* **client:** remove scope for access token grant ([#53](https://github.com/logto-io/go/issues/53))
+
+
+## [v0.1.5](https://github.com/logto-io/go/compare/v0.1.4...v0.1.5) (2022-09-27)
 
 ### Ci
 
@@ -9,6 +16,10 @@
 ### Feat
 
 * fetch user info ([#51](https://github.com/logto-io/go/issues/51))
+
+### Release
+
+* v0.1.5
 
 
 ## [v0.1.4](https://github.com/logto-io/go/compare/v0.1.3...v0.1.4) (2022-09-09)
