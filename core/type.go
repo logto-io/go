@@ -25,7 +25,6 @@ type UserInfoResponse struct {
 	Name                string                 `json:"name"`
 	Username            string                 `json:"username"`
 	Picture             string                 `json:"picture"`
-	RoleNames           []string               `json:"role_names"`
 	Email               string                 `json:"email"`
 	EmailVerified       bool                   `json:"email_verified"`
 	PhoneNumber         string                 `json:"phone_number"`
@@ -35,14 +34,13 @@ type UserInfoResponse struct {
 }
 
 type IdTokenClaims struct {
-	Sub       string   `json:"sub"`
-	Aud       string   `json:"aud"`
-	Exp       int64    `json:"exp"`
-	Iat       int64    `json:"iat"`
-	Iss       string   `json:"iss"`
-	AtHash    string   `json:"at_hash"`
-	Username  string   `json:"username"`
-	Name      string   `json:"name"`
-	Avatar    string   `json:"avatar"`
-	RoleNames []string `json:"role_names"`
+	Sub      string `json:"sub"`
+	Aud      string `json:"aud"`
+	Exp      int64  `json:"exp"`
+	Iat      int64  `json:"iat"`
+	Iss      string `json:"iss"`
+	AtHash   string `json:"at_hash"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Avatar   string `json:"avatar"`
 }

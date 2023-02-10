@@ -10,16 +10,15 @@ import (
 func TestDecodeIdTokenShouldGetExpectedIdTokenClaims(t *testing.T) {
 	now := time.Now()
 	testClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       "1234567890",
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       now.Unix(),
-		Iss:       "1234567890",
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      "1234567890",
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      now.Unix(),
+		Iss:      "1234567890",
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, _, generateError := generateRsaSigningTestTokenAndCorrespondJwks(testClaims)
