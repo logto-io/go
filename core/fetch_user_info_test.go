@@ -19,7 +19,6 @@ func TestFetchUserInfo(t *testing.T) {
 		`"name": "name",` +
 		`"username": "username",` +
 		`"picture": "picture",` +
-		`"role_names": ["role1", "role2"],` +
 		`"email": "email@gmail.com",` +
 		`"email_verified": true,` +
 		`"phone_number": "12345678",` +

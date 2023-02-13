@@ -14,16 +14,15 @@ func TestVerifyIdToken(t *testing.T) {
 	now := time.Now()
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       audience,
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       now.Unix(),
-		Iss:       issuer,
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      audience,
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      now.Unix(),
+		Iss:      issuer,
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -42,16 +41,15 @@ func TestVerifyIdTokenShouldSupportES512FormatJwks(t *testing.T) {
 	now := time.Now()
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       audience,
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       now.Unix(),
-		Iss:       issuer,
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      audience,
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      now.Unix(),
+		Iss:      issuer,
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateEcdsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -67,16 +65,15 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInThePast(t *testing.T) {
 	issuedAt := now.Unix() - ISSUED_AT_RESTRICTIONS - 10
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       "audience.logto.io",
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       issuedAt,
-		Iss:       "issuer.logto.io",
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      "audience.logto.io",
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      issuedAt,
+		Iss:      "issuer.logto.io",
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -92,16 +89,15 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInTheFuture(t *testing.T) {
 	issuedAt := now.Unix() + ISSUED_AT_RESTRICTIONS + 10
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       "audience.logto.io",
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       issuedAt,
-		Iss:       "issuer.logto.io",
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      "audience.logto.io",
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      issuedAt,
+		Iss:      "issuer.logto.io",
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -116,16 +112,15 @@ func TestVerifyIdTokenShouldReturnErrorIfExpired(t *testing.T) {
 	now := time.Now()
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       "audience.logto.io",
-		Exp:       now.Unix() - 10,
-		Iat:       now.Unix(),
-		Iss:       "issuer.logto.io",
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      "audience.logto.io",
+		Exp:      now.Unix() - 10,
+		Iat:      now.Unix(),
+		Iss:      "issuer.logto.io",
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -142,16 +137,15 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuerIsNotMatched(t *testing.T) {
 	now := time.Now()
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       "audience.logto.io",
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       now.Unix(),
-		Iss:       issuer,
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      "audience.logto.io",
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      now.Unix(),
+		Iss:      issuer,
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -170,16 +164,15 @@ func TestVerifyIdTokenShouldReturnErrorIfAudienceIsNotMatched(t *testing.T) {
 	now := time.Now()
 
 	idTokenClaims := IdTokenClaims{
-		Sub:       "1234567890",
-		Aud:       audience,
-		Exp:       now.Add(time.Hour).Unix(),
-		Iat:       now.Unix(),
-		Iss:       "issuer.logto.io",
-		AtHash:    "1234567890",
-		Username:  "1234567890",
-		Name:      "1234567890",
-		Avatar:    "1234567890",
-		RoleNames: []string{"1234567890"},
+		Sub:      "1234567890",
+		Aud:      audience,
+		Exp:      now.Add(time.Hour).Unix(),
+		Iat:      now.Unix(),
+		Iss:      "issuer.logto.io",
+		AtHash:   "1234567890",
+		Username: "1234567890",
+		Name:     "1234567890",
+		Avatar:   "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
