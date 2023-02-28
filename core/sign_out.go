@@ -4,7 +4,7 @@ import "net/url"
 
 type SignOutUriGenerationOptions struct {
 	EndSessionEndpoint    string
-	IdToken               string
+	ClientId              string
 	PostLogoutRedirectUri string
 }
 
@@ -16,7 +16,7 @@ func GenerateSignOutUri(option *SignOutUriGenerationOptions) (string, error) {
 
 	queries := uri.Query()
 
-	queries.Add("id_token_hint", option.IdToken)
+	queries.Add("client_id", option.ClientId)
 
 	if option.PostLogoutRedirectUri != "" {
 		queries.Add("post_logout_redirect_uri", option.PostLogoutRedirectUri)

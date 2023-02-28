@@ -7,10 +7,10 @@ import (
 )
 
 func TestGenerateSignOutUriShouldGenerateCorrectUri(t *testing.T) {
-	testSignOutUri := "https://example.com/logout?id_token_hint=idToken&post_logout_redirect_uri=https://example.com/callback"
+	testSignOutUri := "https://example.com/logout?client_id=clientId&post_logout_redirect_uri=https://example.com/callback"
 	signOutUri, generateSignOutUriErr := GenerateSignOutUri(&SignOutUriGenerationOptions{
 		EndSessionEndpoint:    "https://example.com/logout",
-		IdToken:               "idToken",
+		ClientId:              "clientId",
 		PostLogoutRedirectUri: "https://example.com/callback",
 	})
 
@@ -19,11 +19,11 @@ func TestGenerateSignOutUriShouldGenerateCorrectUri(t *testing.T) {
 }
 
 func TestGenerateSignOutUriShouldGenerateCorrectUriWithoutPostLogoutRedirectUri(t *testing.T) {
-	testSignOutUri := "https://example.com/logout?id_token_hint=idToken"
+	testSignOutUri := "https://example.com/logout?client_id=clientId"
 
 	signOutUri, generateSignOutUriErr := GenerateSignOutUri(&SignOutUriGenerationOptions{
 		EndSessionEndpoint: "https://example.com/logout",
-		IdToken:            "idToken",
+		ClientId:           "clientId",
 	})
 
 	assert.Nil(t, generateSignOutUriErr)

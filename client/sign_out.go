@@ -33,7 +33,7 @@ func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, e
 
 	signOutUri, generateSignOutUriErr := core.GenerateSignOutUri(&core.SignOutUriGenerationOptions{
 		EndSessionEndpoint:    oidcConfig.EndSessionEndpoint,
-		IdToken:               idToken,
+		ClientId:              logtoClient.logtoConfig.AppId,
 		PostLogoutRedirectUri: postLogoutRedirectUri,
 	})
 
