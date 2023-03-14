@@ -14,7 +14,7 @@
 
 The repo for SDKs and working samples written in Go.
 
-Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/go) or Go reference for more information.
+Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/go/) or Go reference for more information.
 
 We also provide [集成指南](https://docs.logto.io/zh-cn/docs/recipes/integrate-logto/go/) in Simplified Chinese.
 
