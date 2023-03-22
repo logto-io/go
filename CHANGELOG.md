@@ -1,10 +1,26 @@
 # Changelog
 
-## [v1.0.0-rc.0](https://github.com/logto-io/go/compare/v0.1.5...v1.0.0-rc.0) (2023-01-19)
+## [v1.0.0](https://github.com/logto-io/go/compare/v1.0.0-rc.0...v1.0.0) (2023-03-14)
+
+### Fix
+
+* **docs:** document link issue ([#61](https://github.com/logto-io/go/issues/61))
+
+### Refactor
+
+* **core:** replace `idTokenHint` with `clientId` in sign-out url ([#57](https://github.com/logto-io/go/issues/57))
+* **core:** remove deprecated role names ([#54](https://github.com/logto-io/go/issues/54))
+
+
+## [v1.0.0-rc.0](https://github.com/logto-io/go/compare/v0.1.5...v1.0.0-rc.0) (2023-02-07)
 
 ### Feat
 
 * **client:** remove scope for access token grant ([#53](https://github.com/logto-io/go/issues/53))
+
+### Release
+
+* v1.0.0-rc.0
 
 
 ## [v0.1.5](https://github.com/logto-io/go/compare/v0.1.4...v0.1.5) (2022-09-27)
