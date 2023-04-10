@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.0.0](https://github.com/logto-io/go/compare/v1.0.0-rc.0...v1.0.0) (2023-03-14)
+## [v1.0.0](https://github.com/logto-io/go/compare/v1.0.0-rc.0...v1.0.0) (2023-03-22)
 
 ### Fix
 
@@ -18,24 +18,12 @@
 
 * **client:** remove scope for access token grant ([#53](https://github.com/logto-io/go/issues/53))
 
-### Release
-
-* v1.0.0-rc.0
-
 
 ## [v0.1.5](https://github.com/logto-io/go/compare/v0.1.4...v0.1.5) (2022-09-27)
-
-### Ci
-
-* checkout repo before extract change log in release workflow ([#49](https://github.com/logto-io/go/issues/49))
 
 ### Feat
 
 * fetch user info ([#51](https://github.com/logto-io/go/issues/51))
-
-### Release
-
-* v0.1.5
 
 
 ## [v0.1.4](https://github.com/logto-io/go/compare/v0.1.3...v0.1.4) (2022-09-09)
@@ -43,14 +31,6 @@
 ### Chore
 
 * update changelog ([#46](https://github.com/logto-io/go/issues/46))
-
-### Ci
-
-* generate the change log after the commit is tagged ([#47](https://github.com/logto-io/go/issues/47))
-
-### Release
-
-* v0.1.4
 
 
 ## [v0.1.3](https://github.com/logto-io/go/compare/v0.1.2...v0.1.3) (2022-09-09)
@@ -67,10 +47,6 @@
 
 * **gin-sample:** rename storage -> `session_storage` ([#24](https://github.com/logto-io/go/issues/24))
 
-### Release
-
-* v0.1.3
-
 
 ## [v0.1.2](https://github.com/logto-io/go/compare/v0.1.1...v0.1.2) (2022-09-07)
 
@@ -78,20 +54,10 @@
 
 * add readme ([#39](https://github.com/logto-io/go/issues/39))
 
-### Ci
-
-* run main workflow on `push-action` branches ([#44](https://github.com/logto-io/go/issues/44))
-* run release workflow only on tag pushed ([#43](https://github.com/logto-io/go/issues/43))
-* add publish workflow ([#42](https://github.com/logto-io/go/issues/42))
-
 ### Fix
 
 * **client:** skip resource check in `GetAccessToken` when resource is empty string ([#38](https://github.com/logto-io/go/issues/38))
 * **client:** `GetIdTokenClaims` should return `ErrNotAuthenticated` if the user is not authenticated ([#37](https://github.com/logto-io/go/issues/37))
-
-### Release
-
-* v0.1.2
 
 
 ## v0.1.1 (2022-09-06)
@@ -104,13 +70,6 @@
 * project setup ([#1](https://github.com/logto-io/go/issues/1))
 * add readme
 * **deps:** add renovate.json ([#20](https://github.com/logto-io/go/issues/20))
-
-### Ci
-
-* add commit lint ([#22](https://github.com/logto-io/go/issues/22))
-* test coverage ([#18](https://github.com/logto-io/go/issues/18))
-* release and publish ([#17](https://github.com/logto-io/go/issues/17))
-* lint and run unit tests ([#9](https://github.com/logto-io/go/issues/9))
 
 ### Feat
 
@@ -138,14 +97,4 @@
 * **client:** replace sign-in context key with constant value ([#32](https://github.com/logto-io/go/issues/32))
 * **client:** extract errors ([#33](https://github.com/logto-io/go/issues/33))
 * **client:** extract storage key ([#27](https://github.com/logto-io/go/issues/27))
-
-### Test
-
-* **client:** sign out ([#30](https://github.com/logto-io/go/issues/30))
-* **client:** sign in ([#29](https://github.com/logto-io/go/issues/29))
-* **client:** handle sign in callback ([#31](https://github.com/logto-io/go/issues/31))
-* **client:** `GetAccessToken` ([#34](https://github.com/logto-io/go/issues/34))
-* **client:** client helper ([#28](https://github.com/logto-io/go/issues/28))
-* **client:** util ([#26](https://github.com/logto-io/go/issues/26))
-* **core:** fetchJwks ([#25](https://github.com/logto-io/go/issues/25))
 
