@@ -110,6 +110,7 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 		TokenEndpoint: oidcConfig.TokenEndpoint,
 		ClientId:      logtoClient.logtoConfig.AppId,
 		RefreshToken:  refreshToken,
+		Resource:      resource,
 		Scopes:        []string{},
 	})
 
