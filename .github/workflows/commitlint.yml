@@ -39,6 +39,7 @@ jobs:
             rules: {
               'type-enum': [2, 'always', [...rules['type-enum'][2], 'release']],
               'scope-enum': [2, 'always', ['core', 'client', 'gin-sample', 'deps']],
+              'body-max-line-length': [2, 'always', 200],
             },
           };
           EEE
