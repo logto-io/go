@@ -6,12 +6,12 @@ info:
   repository_url: https://github.com/logto-io/go
 options:
   commits:
-    # filters:
-    #   Type:
-    #     - feat
-    #     - fix
-    #     - perf
-    #     - refactor
+    filters:
+      Type:
+        - feat
+        - fix
+        - perf
+        - refactor
   commit_groups:
     # title_maps:
     #   feat: Features
