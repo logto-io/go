@@ -28,10 +28,6 @@
 
 ## [v0.1.4](https://github.com/logto-io/go/compare/v0.1.3...v0.1.4) (2022-09-09)
 
-### Chore
-
-* update changelog ([#46](https://github.com/logto-io/go/issues/46))
-
 
 ## [v0.1.3](https://github.com/logto-io/go/compare/v0.1.2...v0.1.3) (2022-09-09)
 
@@ -50,10 +46,6 @@
 
 ## [v0.1.2](https://github.com/logto-io/go/compare/v0.1.1...v0.1.2) (2022-09-07)
 
-### Chore
-
-* add readme ([#39](https://github.com/logto-io/go/issues/39))
-
 ### Fix
 
 * **client:** skip resource check in `GetAccessToken` when resource is empty string ([#38](https://github.com/logto-io/go/issues/38))
@@ -61,15 +53,6 @@
 
 
 ## v0.1.1 (2022-09-06)
-
-### Chore
-
-* bump dependencies version ([#16](https://github.com/logto-io/go/issues/16))
-* bump core version to v0.1.0 (client, gin-sample) ([#15](https://github.com/logto-io/go/issues/15))
-* add license ([#8](https://github.com/logto-io/go/issues/8))
-* project setup ([#1](https://github.com/logto-io/go/issues/1))
-* add readme
-* **deps:** add renovate.json ([#20](https://github.com/logto-io/go/issues/20))
 
 ### Feat
 
