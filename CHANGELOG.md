@@ -1,5 +1,12 @@
 # Changelog
 
+## [v1.0.1](https://github.com/logto-io/go/compare/v1.0.0...v1.0.1) (2023-04-11)
+
+### Fix
+
+* **client:** add resource when calling FetchTokenByRefreshToken ([#64](https://github.com/logto-io/go/issues/64))
+
+
 ## [v1.0.0](https://github.com/logto-io/go/compare/v1.0.0-rc.0...v1.0.0) (2023-03-22)
 
 ### Fix
