@@ -3,7 +3,7 @@ module github.com/logto-io/go
 go 1.19
 
 require (
-	github.com/agiledragon/gomonkey/v2 v2.8.0
+	github.com/agiledragon/gomonkey/v2 v2.9.0
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.8.1
 	github.com/jarcoal/httpmock v1.2.0
