@@ -7,7 +7,7 @@ require (
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.8.1
 	github.com/jarcoal/httpmock v1.2.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.2
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
