@@ -5,11 +5,6 @@ import (
 )
 
 func (logtoClient *LogtoClient) SignOut(postLogoutRedirectUri string) (string, error) {
-	idToken := logtoClient.GetIdToken()
-	if idToken == "" {
-		return "", ErrNotAuthenticated
-	}
-
 	refreshToken := logtoClient.GetRefreshToken()
 
 	logtoClient.accessTokenMap = make(map[string]AccessToken)
