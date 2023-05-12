@@ -181,7 +181,7 @@ func TestFetchUserInfoShouldReturnCorrectUserInfoResponse(t *testing.T) {
 	})
 	defer patchesForGetAccessToken.Reset()
 
-	patchesCoreFetchUserInfo := gomonkey.ApplyFunc(core.FetchUserInfo, func(client *http.Client, userInfoEndpoint, accessToken string) (core.UserInfoResponse, error) {
+	patchesCoreFetchUserInfo := gomonkey.ApplyFunc(core.FetchUserInfo, func(userInfoEndpoint, accessToken string) (core.UserInfoResponse, error) {
 		return testUserInfoResponse, nil
 	})
 	defer patchesCoreFetchUserInfo.Reset()
