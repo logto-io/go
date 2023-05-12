@@ -2,8 +2,18 @@ package core
 
 import "net/http"
 
-func FetchUserInfo(client *http.Client, userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
-	response, requestErr := client.Get(userInfoEndpoint)
+func FetchUserInfo(userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
+	client := &http.Client{}
+
+	request, createRequestErr := http.NewRequest("GET", userInfoEndpoint, nil)
+
+	if createRequestErr != nil {
+		return UserInfoResponse{}, createRequestErr
+	}
+
+	request.Header.Add("Authorization", "Bearer "+accessToken)
+
+	response, requestErr := client.Do(request)
 
 	if requestErr != nil {
 		return UserInfoResponse{}, requestErr
