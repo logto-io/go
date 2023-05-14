@@ -2,7 +2,6 @@ package client
 
 import (
 	"net/http"
-	"net/url"
 	"sort"
 	"strings"
 
@@ -27,12 +26,10 @@ func getRequestProtocol(request *http.Request) string {
 
 func createHttpClient(logtoConfig *LogtoConfig) *http.Client {
 	defaultTransport := http.DefaultTransport.(*http.Transport)
-	customTransport := defaultTransport.Clone()
-	customTransport.Proxy = func(req *http.Request) (*url.URL, error) {
-		if logtoConfig.AppSecret != "" {
-			req.SetBasicAuth(logtoConfig.AppId, logtoConfig.AppSecret)
-		}
-		return defaultTransport.Proxy(req)
+	customTransport := &CustomTransport{
+		logtoConfig.AppId,
+		logtoConfig.AppSecret,
+		defaultTransport,
 	}
 
 	return &http.Client{
