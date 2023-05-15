@@ -15,10 +15,10 @@ var (
 
 func main() {
 	logtoConfig := &client.LogtoConfig{
-		Endpoint:  "http://localhost:3001",
-		AppId:     "wkMqPInVTZL0Ys4K3POl7",
-		AppSecret: "71kbRPQ1NAVA08IBStipz",
-		Resources: []string{"https://api.logto.io"},
+		Endpoint:  "<your-logto-endpoint>", // E.g. "http://localhost:3001"
+		AppId:     "<your-app-id>",
+		AppSecret: "<your-app-secret>",
+		Resources: []string{"your-resource"}, // E.g. "https://default.logto.app/api"
 	}
 
 	store := memstore.NewStore([]byte("secret"))
@@ -41,8 +41,9 @@ func main() {
 			"<div>" + authState + "</div>" +
 			`<div><a href="/sign-in">Sign In</a></div>` +
 			`<div><a href="/sign-out">Sign Out</a></div>` +
-			`<div><a href="/user">Profile</a></div>` +
-			`<div><a href="/protected">Protected Resource</a></div>`
+			`<div><a href="/user-id-token-claims">ID Token Claims</a></div>` +
+			`<div><a href="/protected">Protected Resource</a></div>` +
+			`<div><a href="/user-info">User Info</a></div>`
 
 		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(homePage))
 	})
@@ -71,7 +72,7 @@ func main() {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/")
 	})
 
-	router.GET("/user", func(ctx *gin.Context) {
+	router.GET("/user-id-token-claims", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
 		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
@@ -115,6 +116,29 @@ func main() {
 		unauthorizedPage := `
 		<h1>Unauthorized</h1>
 		<div>You cannot visit the protected content</div>
+		<div><a href="/">Home</a></div>
+		`
+		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
+	})
+
+	router.GET("/user-info", func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
+
+		if logtoClient.IsAuthenticated() {
+			userInfoResponse, fetchUserInfoErr := logtoClient.FetchUserInfo()
+
+			if fetchUserInfoErr != nil {
+				ctx.String(http.StatusOK, fetchUserInfoErr.Error())
+				return
+			}
+
+			ctx.JSON(http.StatusOK, userInfoResponse)
+			return
+		}
+
+		unauthorizedPage := `
+		<h1>Unauthorized</h1>
 		<div><a href="/">Home</a></div>
 		`
 		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))

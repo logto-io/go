@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -33,9 +32,7 @@ func TestFetchUserInfo(t *testing.T) {
 		httpmock.NewStringResponder(200, mockResponse),
 	)
 
-	client := &http.Client{}
-
-	userInfoResponse, fetchError := FetchUserInfo(client, userInfoEndpoint, "dummyAccessToken")
+	userInfoResponse, fetchError := FetchUserInfo(userInfoEndpoint, "accessToken")
 	assert.Nil(t, fetchError)
 
 	var testUserInfoResponse UserInfoResponse
