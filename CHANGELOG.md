@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.0.2](https://github.com/logto-io/go/compare/v1.0.1...v1.0.2) (2023-05-15)
+
+### Fix
+
+* fetch user info ([#71](https://github.com/logto-io/go/issues/71))
+* **client:** remove id token for sign out ([#67](https://github.com/logto-io/go/issues/67))
+* **deps:** update module github.com/jarcoal/httpmock to v1.3.0 ([#60](https://github.com/logto-io/go/issues/60))
+* **deps:** update module github.com/gin-gonic/gin to v1.9.0 ([#59](https://github.com/logto-io/go/issues/59))
+* **deps:** update module github.com/stretchr/testify to v1.8.2 ([#52](https://github.com/logto-io/go/issues/52))
+* **deps:** update module github.com/agiledragon/gomonkey/v2 to v2.9.0 ([#50](https://github.com/logto-io/go/issues/50))
+* **deps:** update golang.org/x/exp digest to 10a5072 ([#48](https://github.com/logto-io/go/issues/48))
+
+
 ## [v1.0.1](https://github.com/logto-io/go/compare/v1.0.0...v1.0.1) (2023-04-11)
 
 ### Fix
