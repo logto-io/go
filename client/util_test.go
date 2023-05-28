@@ -52,17 +52,6 @@ func TestGetOriginRequestUrlShouldReturnCorrectUrlWithTlsConnection(t *testing.T
 	assert.Equal(t, "https://"+testRequestUri, originUrl)
 }
 
-func TestCreateHttpClientShouldReturnHttpClientWithCustomTransportCompletion(t *testing.T) {
-	logtoConfig := &LogtoConfig{
-		AppId:     "AppId",
-		AppSecret: "AppSecret",
-	}
-
-	logtoHttpClient := createHttpClient(logtoConfig)
-
-	assert.NotEqual(t, http.DefaultTransport, logtoHttpClient.Transport)
-}
-
 func TestBuildAccessTokenKeyShouldBuildCorrectly(t *testing.T) {
 	tests := []struct {
 		scopes   []string

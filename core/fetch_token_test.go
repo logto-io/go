@@ -34,6 +34,7 @@ func TestFetchTokenByAuthorizationCode(t *testing.T) {
 		Code:          "code",
 		CodeVerifier:  "codeVerifier",
 		ClientId:      "clientId",
+		ClientSecret:  "clientSecret",
 		RedirectUri:   "redirectUri",
 		Resource:      "resource",
 	}
@@ -71,6 +72,7 @@ func TestFetchTokenByRefreshToken(t *testing.T) {
 	options := &FetchTokenByRefreshTokenOptions{
 		TokenEndpoint: tokenEndpoint,
 		ClientId:      "clientId",
+		ClientSecret:  "clientSecret",
 		RefreshToken:  "refresh_token",
 		Resource:      "resource",
 		Scopes:        []string{"openid", "offline_access"},

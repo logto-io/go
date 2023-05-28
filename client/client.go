@@ -33,7 +33,7 @@ type LogtoClient struct {
 
 func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
 	logtoClient := LogtoClient{
-		httpClient:     createHttpClient(config),
+		httpClient:     &http.Client{},
 		logtoConfig:    config,
 		storage:        storage,
 		accessTokenMap: make(map[string]AccessToken),
@@ -109,6 +109,7 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshToken(logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
 		TokenEndpoint: oidcConfig.TokenEndpoint,
 		ClientId:      logtoClient.logtoConfig.AppId,
+		ClientSecret:  logtoClient.logtoConfig.AppSecret,
 		RefreshToken:  refreshToken,
 		Resource:      resource,
 		Scopes:        []string{},
