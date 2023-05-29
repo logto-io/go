@@ -33,6 +33,7 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 		Code:          code,
 		CodeVerifier:  signInSession.CodeVerifier,
 		ClientId:      logtoClient.logtoConfig.AppId,
+		ClientSecret:  logtoClient.logtoConfig.AppSecret,
 		RedirectUri:   signInSession.RedirectUri,
 	})
 

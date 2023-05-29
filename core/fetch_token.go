@@ -11,6 +11,7 @@ type FetchTokenByAuthorizationCodeOptions struct {
 	Code          string
 	CodeVerifier  string
 	ClientId      string
+	ClientSecret  string
 	RedirectUri   string
 	Resource      string
 }
@@ -27,8 +28,19 @@ func FetchTokenByAuthorizationCode(client *http.Client, options *FetchTokenByAut
 	if options.Resource != "" {
 		values.Add("resource", options.Resource)
 	}
+	request, createRequestErr := http.NewRequest("POST", options.TokenEndpoint, strings.NewReader(values.Encode()))
 
-	response, requestErr := client.PostForm(options.TokenEndpoint, values)
+	if createRequestErr != nil {
+		return RefreshTokenResponse{}, createRequestErr
+	}
+
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if options.ClientSecret != "" {
+		request.SetBasicAuth(options.ClientId, options.ClientSecret)
+	}
+
+	response, requestErr := client.Do(request)
 
 	if requestErr != nil {
 		return CodeTokenResponse{}, requestErr
@@ -49,6 +61,7 @@ func FetchTokenByAuthorizationCode(client *http.Client, options *FetchTokenByAut
 type FetchTokenByRefreshTokenOptions struct {
 	TokenEndpoint string
 	ClientId      string
+	ClientSecret  string
 	RefreshToken  string
 	Resource      string
 	Scopes        []string
@@ -69,7 +82,19 @@ func FetchTokenByRefreshToken(client *http.Client, options *FetchTokenByRefreshT
 		values.Add("scope", strings.Join(options.Scopes, " "))
 	}
 
-	response, requestErr := client.PostForm(options.TokenEndpoint, values)
+	request, createRequestErr := http.NewRequest("POST", options.TokenEndpoint, strings.NewReader(values.Encode()))
+
+	if createRequestErr != nil {
+		return RefreshTokenResponse{}, createRequestErr
+	}
+
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if options.ClientSecret != "" {
+		request.SetBasicAuth(options.ClientId, options.ClientSecret)
+	}
+
+	response, requestErr := client.Do(request)
 
 	if requestErr != nil {
 		return RefreshTokenResponse{}, requestErr
