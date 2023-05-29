@@ -1,6 +1,13 @@
 # Changelog
 
-## [v1.0.2](https://github.com/logto-io/go/compare/v1.0.1...v1.0.2) (2023-05-15)
+## [1.0.3](https://github.com/logto-io/go/compare/v1.0.2...1.0.3) (2023-05-29)
+
+### Fix
+
+* ensure the basic auth header is included when fetching token ([#75](https://github.com/logto-io/go/issues/75))
+
+
+## [v1.0.2](https://github.com/logto-io/go/compare/v1.0.1...v1.0.2) (2023-05-18)
 
 ### Fix
 
