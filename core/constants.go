@@ -6,9 +6,24 @@ var (
 )
 
 var (
-	UserScopeProfile    = "profile"
-	UserScopeEmail      = "email"
-	UserScopePhone      = "phone"
-	UserScopeCustomData = "custom_data"
-	UserScopeIdentities = "identities"
+	ReservedResourceOrganization = "urn:logto:resource:organizations"
+)
+
+var (
+	UserScopeProfile           = "profile"
+	UserScopeEmail             = "email"
+	UserScopePhone             = "phone"
+	UserScopeCustomData        = "custom_data"
+	UserScopeIdentities        = "identities"
+	UserScopeRoles             = "roles"
+	UserScopeOrganizations     = "urn:logto:scope:organizations"
+	UserScopeOrganizationRoles = "urn:logto:scope:organization_roles"
+)
+
+var (
+	DefaultScopes = []string{
+		ReservedScopeOpenId,
+		ReservedScopeOfflineAccess,
+		UserScopeProfile,
+	}
 )

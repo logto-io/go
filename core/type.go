@@ -34,13 +34,31 @@ type UserInfoResponse struct {
 }
 
 type IdTokenClaims struct {
+	Iss                 string   `json:"iss"`
+	Sub                 string   `json:"sub"`
+	Aud                 string   `json:"aud"`
+	Exp                 int64    `json:"exp"`
+	Iat                 int64    `json:"iat"`
+	AtHash              string   `json:"at_hash"`
+	Name                string   `json:"name"`
+	Username            string   `json:"username"`
+	Picture             string   `json:"picture"`
+	Email               string   `json:"email"`
+	EmailVerified       bool     `json:"email_verified"`
+	PhoneNumber         string   `json:"phone_number"`
+	PhoneNumberVerified bool     `json:"phone_number_verified"`
+	Roles               []string `json:"roles"`
+	Organizations       []string `json:"organizations"`
+	OrganizationRoles   []string `json:"organization_roles"`
+}
+
+type OrganizationAccessTokenClaims struct {
+	Iss      string `json:"iss"`
 	Sub      string `json:"sub"`
 	Aud      string `json:"aud"`
 	Exp      int64  `json:"exp"`
 	Iat      int64  `json:"iat"`
-	Iss      string `json:"iss"`
-	AtHash   string `json:"at_hash"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar"`
+	ClientId string `json:"client_id"`
+	Jti      string `json:"jti"`
+	Scope    string `json:"scope"`
 }

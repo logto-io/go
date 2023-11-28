@@ -67,7 +67,7 @@ func TestBuildAccessTokenKeyShouldBuildCorrectly(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		accessTokenKey := buildAccessTokenKey(test.scopes, test.resource)
+		accessTokenKey := buildAccessTokenKey(test.scopes, test.resource, "")
 		assert.Equal(t, test.result, accessTokenKey)
 	}
 }
