@@ -8,7 +8,6 @@ import (
 )
 
 func parseDataFromResponse(response *http.Response, dest interface{}) error {
-	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err
