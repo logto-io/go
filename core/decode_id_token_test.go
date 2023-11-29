@@ -18,7 +18,7 @@ func TestDecodeIdTokenShouldGetExpectedIdTokenClaims(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "picture",
 	}
 
 	idToken, _, generateError := generateRsaSigningTestTokenAndCorrespondJwks(testClaims)
