@@ -156,9 +156,10 @@ func TestVerifyAndSaveTokenResponseShouldSaveToken(t *testing.T) {
 
 	testIdToken := "idToken"
 	testRefreshToken := "refreshToken"
+	testAccessTokenKey := "@"
 	testAccessToken := AccessToken{Token: "testToken", Scope: "read", ExpiresAt: time.Now().Unix() + 60}
 
-	verifyAndSaveTokenResponseErr := logtoClient.verifyAndSaveTokenResponse(testIdToken, testRefreshToken, testAccessToken, &core.OidcConfigResponse{})
+	verifyAndSaveTokenResponseErr := logtoClient.verifyAndSaveTokenResponse(testIdToken, testRefreshToken, testAccessTokenKey, testAccessToken, &core.OidcConfigResponse{})
 	assert.Nil(t, verifyAndSaveTokenResponseErr)
 
 	assert.Equal(t, testIdToken, logtoClient.GetIdToken())

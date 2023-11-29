@@ -24,10 +24,16 @@ func getRequestProtocol(request *http.Request) string {
 	return "http"
 }
 
-func buildAccessTokenKey(scopes []string, resource string) string {
+func buildAccessTokenKey(scopes []string, resource string, organizationId string) string {
 	sort.Strings(scopes)
 	scopesPart := strings.Join(scopes, " ")
-	return scopesPart + "@" + resource
+
+	organizationPart := ""
+	if organizationId != "" {
+		organizationPart = "#" + organizationId
+	}
+
+	return scopesPart + "@" + resource + organizationPart
 }
 
 func getResourceFromAccessToken(accessToken string) string {

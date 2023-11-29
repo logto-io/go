@@ -69,6 +69,7 @@ func (logtoClient *LogtoClient) createRemoteJwks(jwksUri string) (*jose.JSONWebK
 func (logtoClient *LogtoClient) verifyAndSaveTokenResponse(
 	idToken string,
 	refreshToken string,
+	accessTokenKey string,
 	accessToken AccessToken,
 	oidcConfig *core.OidcConfigResponse,
 ) error {
@@ -87,12 +88,6 @@ func (logtoClient *LogtoClient) verifyAndSaveTokenResponse(
 	}
 
 	logtoClient.SetRefreshToken(refreshToken)
-
-	// Note
-	// - Treat `scopes` as `empty` to construct the default access token key
-	// for we do not support custom scopes in V1
-	resource := getResourceFromAccessToken(accessToken.Token)
-	accessTokenKey := buildAccessTokenKey([]string{}, resource)
 
 	logtoClient.SaveAccessToken(accessTokenKey, accessToken)
 

@@ -49,9 +49,12 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 		ExpiresAt: time.Now().Unix() + int64(codeTokenResponse.ExpireIn),
 	}
 
+	// - Treat `scopes` as `empty` to construct the default access token key
+	accessTokenKey := buildAccessTokenKey([]string{}, "", "")
 	verificationErr := logtoClient.verifyAndSaveTokenResponse(
 		codeTokenResponse.IdToken,
 		codeTokenResponse.RefreshToken,
+		accessTokenKey,
 		accessToken,
 		&oidcConfig,
 	)
