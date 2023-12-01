@@ -20,6 +20,12 @@ type CodeTokenResponse struct {
 
 type RefreshTokenResponse = CodeTokenResponse
 
+type Organization struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type UserInfoResponse struct {
 	Sub                 string                 `json:"sub"`
 	Name                string                 `json:"name"`
@@ -31,6 +37,7 @@ type UserInfoResponse struct {
 	PhoneNumberVerified bool                   `json:"phone_number_verified"`
 	CustomData          map[string]interface{} `json:"custom_data"`
 	Identities          map[string]interface{} `json:"identities"`
+	OrganizationData    []Organization         `json:"organization_data"`
 }
 
 type IdTokenClaims struct {
