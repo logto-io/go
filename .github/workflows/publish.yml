@@ -56,3 +56,4 @@ jobs:
           branch: master
           tags: true
           timeout: 20
+          acceptable_conclusions: success,skipped
