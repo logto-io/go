@@ -1,9 +1,25 @@
 # Changelog
 
-## [1.0.3](https://github.com/logto-io/go/compare/v1.0.3...1.0.3) (2023-05-29)
+## [v1.0.4](https://github.com/logto-io/go/compare/v1.0.3...v1.0.4) (2023-12-01)
+
+### Feat
+
+* support organizations ([#89](https://github.com/logto-io/go/issues/89))
+* **core:** add organization data to userinfo response ([#91](https://github.com/logto-io/go/issues/91))
+
+### Fix
+
+* **deps:** update module github.com/jarcoal/httpmock to v1.3.1 ([#80](https://github.com/logto-io/go/issues/80))
+* **deps:** update golang.org/x/exp digest to 6522937 ([#79](https://github.com/logto-io/go/issues/79))
+* **deps:** update module github.com/stretchr/testify to v1.8.4 ([#73](https://github.com/logto-io/go/issues/73))
+* **deps:** update module github.com/agiledragon/gomonkey/v2 to v2.10.1 ([#69](https://github.com/logto-io/go/issues/69))
+* **deps:** update golang.org/x/exp digest to 2e198f4 ([#68](https://github.com/logto-io/go/issues/68))
 
 
-## [v1.0.3](https://github.com/logto-io/go/compare/v1.0.2...v1.0.3) (2023-05-29)
+## [v1.0.3](https://github.com/logto-io/go/compare/1.0.3...v1.0.3) (2023-05-29)
+
+
+## [1.0.3](https://github.com/logto-io/go/compare/v1.0.2...1.0.3) (2023-05-29)
 
 ### Fix
 

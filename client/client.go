@@ -5,18 +5,10 @@ import (
 	"time"
 
 	"golang.org/x/exp/slices"
+	"gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/logto-io/go/core"
 )
-
-type LogtoConfig struct {
-	Endpoint  string
-	AppId     string
-	AppSecret string
-	Scopes    []string
-	Resources []string
-	Prompt    string
-}
 
 type AccessToken struct {
 	Token     string `json:"token"`
@@ -32,6 +24,7 @@ type LogtoClient struct {
 }
 
 func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
+	config.normalized()
 	logtoClient := LogtoClient{
 		httpClient:     &http.Client{},
 		logtoConfig:    config,
@@ -71,12 +64,35 @@ func (logtoClient *LogtoClient) GetIdTokenClaims() (core.IdTokenClaims, error) {
 	return core.DecodeIdToken(logtoClient.GetIdToken())
 }
 
+func (logtoClient *LogtoClient) GetOrganizationTokenClaims(organizationId string) (core.OrganizationAccessTokenClaims, error) {
+	token, getTokenErr := logtoClient.GetOrganizationToken(organizationId)
+
+	if getTokenErr != nil {
+		return core.OrganizationAccessTokenClaims{}, getTokenErr
+	}
+
+	jwtObject, parseTokenErr := jwt.ParseSigned(token.Token)
+
+	if parseTokenErr != nil {
+		return core.OrganizationAccessTokenClaims{}, parseTokenErr
+	}
+
+	var claims core.OrganizationAccessTokenClaims
+	claimsErr := jwtObject.UnsafeClaimsWithoutVerification(&claims)
+
+	if claimsErr != nil {
+		return core.OrganizationAccessTokenClaims{}, claimsErr
+	}
+
+	return claims, claimsErr
+}
+
 func (logtoClient *LogtoClient) SaveAccessToken(key string, accessToken AccessToken) {
 	logtoClient.accessTokenMap[key] = accessToken
 	logtoClient.persistAccessTokenMap()
 }
 
-func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, error) {
+func (logtoClient *LogtoClient) getAccessToken(resource string, organizationId string) (AccessToken, error) {
 	if !logtoClient.IsAuthenticated() {
 		return AccessToken{}, ErrNotAuthenticated
 	}
@@ -87,7 +103,7 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 		}
 	}
 
-	accessTokenKey := buildAccessTokenKey([]string{}, resource)
+	accessTokenKey := buildAccessTokenKey([]string{}, resource, organizationId)
 	if accessToken, ok := logtoClient.accessTokenMap[accessTokenKey]; ok {
 		if accessToken.ExpiresAt > time.Now().Unix() {
 			return accessToken, nil
@@ -107,12 +123,13 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 	}
 
 	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshToken(logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
-		TokenEndpoint: oidcConfig.TokenEndpoint,
-		ClientId:      logtoClient.logtoConfig.AppId,
-		ClientSecret:  logtoClient.logtoConfig.AppSecret,
-		RefreshToken:  refreshToken,
-		Resource:      resource,
-		Scopes:        []string{},
+		TokenEndpoint:  oidcConfig.TokenEndpoint,
+		ClientId:       logtoClient.logtoConfig.AppId,
+		ClientSecret:   logtoClient.logtoConfig.AppSecret,
+		RefreshToken:   refreshToken,
+		Resource:       resource,
+		Scopes:         []string{},
+		OrganizationId: organizationId,
 	})
 
 	if refreshTokenErr != nil {
@@ -128,6 +145,7 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 	verificationErr := logtoClient.verifyAndSaveTokenResponse(
 		refreshedToken.IdToken,
 		refreshedToken.RefreshToken,
+		accessTokenKey,
 		refreshedAccessToken,
 		&oidcConfig,
 	)
@@ -137,6 +155,18 @@ func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, er
 	}
 
 	return refreshedAccessToken, nil
+}
+
+func (logtoClient *LogtoClient) GetAccessToken(resource string) (AccessToken, error) {
+	return logtoClient.getAccessToken(resource, "")
+}
+
+func (logtoClient *LogtoClient) GetOrganizationToken(organizationId string) (AccessToken, error) {
+	if !slices.Contains(logtoClient.logtoConfig.Scopes, core.UserScopeOrganizations) {
+		return AccessToken{}, ErrMissingScopeOrganizations
+	}
+
+	return logtoClient.getAccessToken("", organizationId)
 }
 
 func (logtoClient *LogtoClient) FetchUserInfo() (core.UserInfoResponse, error) {
