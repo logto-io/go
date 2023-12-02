@@ -1,11 +1,13 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
+
 	"github.com/logto-io/go/client"
 )
 
@@ -144,5 +146,5 @@ func main() {
 		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
 	})
 
-	router.Run("0.0.0:8080")
+	log.Fatal(router.Run("0.0.0:8080"))
 }
