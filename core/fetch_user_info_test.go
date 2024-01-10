@@ -23,7 +23,11 @@ func TestFetchUserInfo(t *testing.T) {
 		`"phone_number": "12345678",` +
 		`"phone_number_verified": true,` +
 		`"custom_data": {"level": 1},` +
-		`"identities": {"google": {"id": 1}}` +
+		`"identities": {"google": {"id": 1}},` +
+		`"roles": ["role1", "role2"],` +
+		`"organizations": ["org1"],` +
+		`"organization_roles": ["viewer", "editor"],` +
+		`"organization_data": [{"id": "org1", "name": "org1Name", "description": "org1Desc"}]` +
 		`}`
 
 	httpmock.RegisterResponder(
