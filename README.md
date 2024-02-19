@@ -14,7 +14,7 @@
 
 The repo for SDKs and working samples written in Go.
 
-Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/go/) or Go reference for more information.
+Check out the [Go SDK tutorial](https://docs.logto.io/sdk/go/) or [Go reference](https://pkg.go.dev/github.com/logto-io/go) for more information.
 
 ## Installation
 
