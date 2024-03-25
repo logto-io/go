@@ -99,50 +99,5 @@ func main() {
 		ctx.Redirect(http.StatusTemporaryRedirect, signOutUri)
 	})
 
-	router.GET("/protected", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
-
-		if logtoClient.IsAuthenticated() {
-			protectedPage := `
-			<h1>Authenticated</h1>
-			<div>Protected content</div>
-			<div><a href="/">Home</a></div>
-			`
-			ctx.Data(http.StatusOK, ContentTypeHtml, []byte(protectedPage))
-			return
-		}
-
-		unauthorizedPage := `
-		<h1>Unauthorized</h1>
-		<div>You cannot visit the protected content</div>
-		<div><a href="/">Home</a></div>
-		`
-		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
-	})
-
-	router.GET("/user-info", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
-
-		if logtoClient.IsAuthenticated() {
-			userInfoResponse, fetchUserInfoErr := logtoClient.FetchUserInfo()
-
-			if fetchUserInfoErr != nil {
-				ctx.String(http.StatusOK, fetchUserInfoErr.Error())
-				return
-			}
-
-			ctx.JSON(http.StatusOK, userInfoResponse)
-			return
-		}
-
-		unauthorizedPage := `
-		<h1>Unauthorized</h1>
-		<div><a href="/">Home</a></div>
-		`
-		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
-	})
-
-	router.Run("0.0.0:8080")
+	router.Run("0.0.0.0:8080")
 }
