@@ -42,8 +42,7 @@ func main() {
 			`<div><a href="/sign-in">Sign In</a></div>` +
 			`<div><a href="/sign-out">Sign Out</a></div>` +
 			`<div><a href="/user-id-token-claims">ID Token Claims</a></div>` +
-			`<div><a href="/protected">Protected Resource</a></div>` +
-			`<div><a href="/user-info">User Info</a></div>`
+			`<div><a href="/protected">Protected Resource</a></div>`
 
 		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(homePage))
 	})
@@ -97,6 +96,28 @@ func main() {
 		}
 
 		ctx.Redirect(http.StatusTemporaryRedirect, signOutUri)
+	})
+
+	router.GET("/protected", func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
+		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
+
+		if logtoClient.IsAuthenticated() {
+			protectedPage := `
+			<h1>Authenticated</h1>
+			<div>Protected content</div>
+			<div><a href="/">Home</a></div>
+			`
+			ctx.Data(http.StatusOK, ContentTypeHtml, []byte(protectedPage))
+			return
+		}
+
+		unauthorizedPage := `
+		<h1>Unauthorized</h1>
+		<div>You cannot visit the protected content</div>
+		<div><a href="/">Home</a></div>
+		`
+		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
 	})
 
 	router.Run("0.0.0.0:8080")
