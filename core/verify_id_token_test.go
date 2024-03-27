@@ -22,7 +22,7 @@ func TestVerifyIdToken(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -49,7 +49,7 @@ func TestVerifyIdTokenShouldSupportES512FormatJwks(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateEcdsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -73,7 +73,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInThePast(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -97,7 +97,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuedAtIsInTheFuture(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -120,7 +120,7 @@ func TestVerifyIdTokenShouldReturnErrorIfExpired(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -145,7 +145,7 @@ func TestVerifyIdTokenShouldReturnErrorIfIssuerIsNotMatched(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)
@@ -172,7 +172,7 @@ func TestVerifyIdTokenShouldReturnErrorIfAudienceIsNotMatched(t *testing.T) {
 		AtHash:   "1234567890",
 		Username: "1234567890",
 		Name:     "1234567890",
-		Avatar:   "1234567890",
+		Picture:  "1234567890",
 	}
 
 	idToken, jwks, generateError := generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims)

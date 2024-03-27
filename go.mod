@@ -6,9 +6,9 @@ require (
 	github.com/agiledragon/gomonkey/v2 v2.10.1
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.1
-	github.com/jarcoal/httpmock v1.3.0
+	github.com/jarcoal/httpmock v1.3.1
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
+	golang.org/x/exp v0.0.0-20231127185646-65229373498e
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 

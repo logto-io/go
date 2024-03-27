@@ -59,12 +59,13 @@ func FetchTokenByAuthorizationCode(client *http.Client, options *FetchTokenByAut
 }
 
 type FetchTokenByRefreshTokenOptions struct {
-	TokenEndpoint string
-	ClientId      string
-	ClientSecret  string
-	RefreshToken  string
-	Resource      string
-	Scopes        []string
+	TokenEndpoint  string
+	ClientId       string
+	ClientSecret   string
+	RefreshToken   string
+	Resource       string
+	Scopes         []string
+	OrganizationId string
 }
 
 func FetchTokenByRefreshToken(client *http.Client, options *FetchTokenByRefreshTokenOptions) (RefreshTokenResponse, error) {
@@ -80,6 +81,10 @@ func FetchTokenByRefreshToken(client *http.Client, options *FetchTokenByRefreshT
 
 	if len(options.Scopes) > 0 {
 		values.Add("scope", strings.Join(options.Scopes, " "))
+	}
+
+	if options.OrganizationId != "" {
+		values.Add("organization_id", options.OrganizationId)
 	}
 
 	request, createRequestErr := http.NewRequest("POST", options.TokenEndpoint, strings.NewReader(values.Encode()))

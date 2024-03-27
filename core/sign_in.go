@@ -2,15 +2,8 @@ package core
 
 import (
 	"net/url"
+	"slices"
 	"strings"
-)
-
-var (
-	defaultScopes = []string{
-		ReservedScopeOpenId,
-		ReservedScopeOfflineAccess,
-		UserScopeProfile,
-	}
 )
 
 type SignInUriGenerationOptions struct {
@@ -40,14 +33,19 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 	queries.Add("state", option.State)
 
 	scopes := option.Scopes
-	for _, defaultScope := range defaultScopes {
-		scopes = appendScopeIfNotExisted(scopes, defaultScope)
+	for _, defaultScope := range DefaultScopes {
+		scopes = AppendIfNotExisted(scopes, defaultScope)
 	}
 
 	queries.Add("scope", strings.Join(scopes, " "))
 
-	if len(option.Resources) != 0 {
-		for _, resource := range option.Resources {
+	resources := option.Resources
+	if slices.Contains(scopes, UserScopeOrganizations) {
+		resources = AppendIfNotExisted(resources, ReservedResourceOrganization)
+	}
+
+	if len(resources) != 0 {
+		for _, resource := range resources {
 			queries.Add("resource", resource)
 		}
 	}
@@ -67,14 +65,4 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 	}
 
 	return uri.String() + "?" + unescapedQueries, nil
-}
-
-func appendScopeIfNotExisted(scopes []string, scope string) []string {
-	for _, s := range scopes {
-		if s == scope {
-			return scopes
-		}
-	}
-
-	return append(scopes, scope)
 }
