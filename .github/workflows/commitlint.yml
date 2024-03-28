@@ -32,14 +32,26 @@ jobs:
       
       - name: Create commitlint config file
         run: |
-          cat <<EEE > commitlint.config.js
-          const { rules } = require('@commitlint/config-conventional');
-          module.exports = {
-            extends: ['@commitlint/config-conventional'],
+          cat <<EEE > commitlint.config.mjs
+          export default {
+            extends: ["@commitlint/config-conventional"],
             rules: {
-              'type-enum': [2, 'always', [...rules['type-enum'][2], 'release']],
-              'scope-enum': [2, 'always', ['core', 'client', 'gin-sample', 'deps']],
-              'body-max-line-length': [2, 'always', 200],
+              "type-enum": [
+                2,
+                "always",
+                [
+                  "feat",
+                  "fix",
+                  "refactor",
+                  "test",
+                  "ci",
+                  "chore",
+                  "revert",
+                  "release",
+                ],
+              ],
+              "scope-enum": [2, "always", ["core", "client", "gin-sample", "deps"]],
+              "body-max-line-length": [2, "always", 200],
             },
           };
           EEE
