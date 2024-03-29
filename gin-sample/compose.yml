@@ -9,14 +9,9 @@ services:
         RUN git clone https://github.com/logto-io/go.git
         WORKDIR /app/go/gin-sample
         RUN go mod download
-
-        ENV ENDPOINT=<your-logto-endpoint>
-        ENV APP_ID=<your-app-id>
-        ENV APP_SECRET=<your-app-secret>
-        ENV RESOURCES=<your-resources>
-        ENV CALLBACK_URI=<your-callback-uri>
-        ENV POST_LOGOUT_REDIRECT_URI=<your-post-logout-redirect-uri>
-
-        CMD go run .
+        RUN CGO_ENABLED=0 GOOS=linux go build -o /logto-go
+    command: /logto-go
+    env_file:
+      - .env
     ports:
       - 8080:8080
