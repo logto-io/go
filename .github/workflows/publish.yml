@@ -30,7 +30,7 @@ jobs:
           git config --global user.name silverhand-bot
 
       - name: Setup Go Env
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '^1.19'
 
