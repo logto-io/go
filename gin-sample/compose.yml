@@ -1,0 +1,17 @@
+services:
+  logto-go:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM golang:1.22-alpine
+        RUN apk add git
+        WORKDIR /app
+        RUN git clone https://github.com/logto-io/go.git
+        WORKDIR /app/go/gin-sample
+        RUN go mod download
+        RUN CGO_ENABLED=0 GOOS=linux go build -o /logto-go
+    command: /logto-go
+    env_file:
+      - .env
+    ports:
+      - 8080:8080

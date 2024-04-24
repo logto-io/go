@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -15,10 +17,15 @@ var (
 
 func main() {
 	logtoConfig := &client.LogtoConfig{
-		Endpoint:  "<your-logto-endpoint>", // E.g. "http://localhost:3001"
-		AppId:     "<your-app-id>",
-		AppSecret: "<your-app-secret>",
-		Resources: []string{"your-resource"}, // E.g. "https://default.logto.app/api"
+		// see .env.example for more details and examples
+		Endpoint:  os.Getenv("ENDPOINT"),
+		AppId:     os.Getenv("APP_ID"),
+		AppSecret: os.Getenv("APP_SECRET"),
+		Resources: []string{},
+	}
+	resources, present := os.LookupEnv("RESOURCES")
+	if present {
+		logtoConfig.Resources = strings.Split(resources, ",")
 	}
 
 	store := memstore.NewStore([]byte("secret"))
@@ -51,7 +58,7 @@ func main() {
 	router.GET("/sign-in", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
 		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
-		signInUri, err := logtoClient.SignIn("http://localhost:8080/sign-in-callback")
+		signInUri, err := logtoClient.SignIn(os.Getenv("REDIRECT_URI"))
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, err.Error())
 			return
@@ -89,7 +96,7 @@ func main() {
 		session := sessions.Default(ctx)
 		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
 
-		signOutUri, signOutErr := logtoClient.SignOut("http://localhost:8080")
+		signOutUri, signOutErr := logtoClient.SignOut(os.Getenv("POST_SIGN_OUT_REDIRECT_URI"))
 
 		if signOutErr != nil {
 			ctx.String(http.StatusOK, signOutErr.Error())
@@ -144,5 +151,5 @@ func main() {
 		ctx.Data(http.StatusOK, ContentTypeHtml, []byte(unauthorizedPage))
 	})
 
-	router.Run("0.0.0:8080")
+	router.Run("0.0.0.0:8080")
 }
