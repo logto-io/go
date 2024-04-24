@@ -60,13 +60,13 @@ jobs:
           go test github.com/logto-io/go/client -coverprofile=./build/client/test/coverage.out -covermode=atomic -gcflags=all=-l
 
       - name: Upload Core Coverage Report
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           flags: core
           file: ./build/core/test/coverage.out
 
       - name: Upload Client Coverage Report
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           flags: client
           file: ./build/client/test/coverage.out
