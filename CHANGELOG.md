@@ -1,5 +1,24 @@
 # Changelog
 
+## [v1.0.5](https://github.com/logto-io/go/compare/v1.0.4...v1.0.5) (2024-04-25)
+
+### Feat
+
+* add roles and organiaztion-related data for `userInfoResponse` ([#99](https://github.com/logto-io/go/issues/99))
+
+### Fix
+
+* correct hostname for gin sample and add compose file to run anywhere to test ([#111](https://github.com/logto-io/go/issues/111))
+* **deps:** update module github.com/gin-contrib/sessions to v1 ([#112](https://github.com/logto-io/go/issues/112))
+* **deps:** update module github.com/stretchr/testify to v1.9.0 ([#104](https://github.com/logto-io/go/issues/104))
+* **deps:** update golang.org/x/exp digest to fe59bbe ([#98](https://github.com/logto-io/go/issues/98))
+* **deps:** update module github.com/agiledragon/gomonkey/v2 to v2.11.0 ([#88](https://github.com/logto-io/go/issues/88))
+
+### Refactor
+
+* update SDK tutorial link ([#103](https://github.com/logto-io/go/issues/103))
+
+
 ## [v1.0.4](https://github.com/logto-io/go/compare/v1.0.3...v1.0.4) (2023-12-01)
 
 ### Feat
