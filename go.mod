@@ -8,7 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
+	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
