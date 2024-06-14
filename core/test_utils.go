@@ -6,8 +6,8 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
+	"github.com/go-jose/go-jose/v4"
+	"github.com/go-jose/go-jose/v4/jwt"
 )
 
 func generateTestTokenBySigningKey(keyId string, signingKey jose.SigningKey, idTokenClaims IdTokenClaims) (string, error) {
@@ -22,7 +22,7 @@ func generateTestTokenBySigningKey(keyId string, signingKey jose.SigningKey, idT
 
 	builder := jwt.Signed(rsaSigner)
 
-	token, buildTokenError := builder.Claims(idTokenClaims).CompactSerialize()
+	token, buildTokenError := builder.Claims(idTokenClaims).Serialize()
 
 	if buildTokenError != nil {
 		return "", buildTokenError

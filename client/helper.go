@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/url"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/logto-io/go/core"
-	"gopkg.in/square/go-jose.v2"
 )
 
 func (logtoClient *LogtoClient) fetchOidcConfig() (core.OidcConfigResponse, error) {

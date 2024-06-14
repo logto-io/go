@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/go-jose/go-jose/v4"
+	"github.com/go-jose/go-jose/v4/jwt"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 func TestGetOriginRequestUrlShouldReturnCorrectUrl(t *testing.T) {
@@ -122,7 +122,7 @@ func createTestToken(resource string) (string, error) {
 		Aud: resource,
 	}
 
-	token, buildTokenError := builder.Claims(claims).CompactSerialize()
+	token, buildTokenError := builder.Claims(claims).Serialize()
 
 	if buildTokenError != nil {
 		return "", buildTokenError
