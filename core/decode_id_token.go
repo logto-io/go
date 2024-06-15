@@ -1,9 +1,7 @@
 package core
 
-import "gopkg.in/square/go-jose.v2/jwt"
-
 func DecodeIdToken(token string) (IdTokenClaims, error) {
-	jwtObject, err := jwt.ParseSigned(token)
+	jwtObject, err := ParseSignedJwt(token)
 
 	if err != nil {
 		return IdTokenClaims{}, err

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"golang.org/x/exp/slices"
-	"gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/logto-io/go/core"
 )
@@ -71,7 +70,7 @@ func (logtoClient *LogtoClient) GetOrganizationTokenClaims(organizationId string
 		return core.OrganizationAccessTokenClaims{}, getTokenErr
 	}
 
-	jwtObject, parseTokenErr := jwt.ParseSigned(token.Token)
+	jwtObject, parseTokenErr := core.ParseSignedJwt(token.Token)
 
 	if parseTokenErr != nil {
 		return core.OrganizationAccessTokenClaims{}, parseTokenErr

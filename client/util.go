@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"gopkg.in/square/go-jose.v2/jwt"
+	"github.com/logto-io/go/core"
 )
 
 func GetOriginRequestUrl(request *http.Request) string {
@@ -37,7 +37,7 @@ func buildAccessTokenKey(scopes []string, resource string, organizationId string
 }
 
 func getResourceFromAccessToken(accessToken string) string {
-	jwtObject, parseToJwtErr := jwt.ParseSigned(accessToken)
+	jwtObject, parseToJwtErr := core.ParseSignedJwt(accessToken)
 	if parseToJwtErr != nil {
 		return ""
 	}

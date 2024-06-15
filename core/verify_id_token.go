@@ -3,14 +3,13 @@ package core
 import (
 	"time"
 
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
+	"github.com/go-jose/go-jose/v4"
 )
 
 var ISSUED_AT_RESTRICTIONS int64 = 60 // in seconds
 
 func VerifyIdToken(idToken, clientId, issuer string, jwks *jose.JSONWebKeySet) error {
-	jws, err := jwt.ParseSigned(idToken)
+	jws, err := ParseSignedJwt(idToken)
 	if err != nil {
 		return err
 	}

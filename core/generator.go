@@ -1,9 +1,10 @@
 package core
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
-	"math/rand"
+	"fmt"
 )
 
 var (
@@ -26,6 +27,9 @@ func GenerateState() string {
 
 func generateRandomString(length uint32) string {
 	token := make([]byte, length)
-	rand.Read(token)
+	if _, error := rand.Read(token); error != nil {
+		// This should never happen
+		panic(fmt.Sprintf("Failed to generate random string: %v", error))
+	}
 	return base64.RawURLEncoding.EncodeToString(token)
 }
