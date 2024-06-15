@@ -2,7 +2,7 @@ module github.com/logto-io/go
 
 go 1.21
 
-toolchain go1.21.4
+toolchain go1.22.4
 
 require (
 	github.com/agiledragon/gomonkey/v2 v2.11.0
