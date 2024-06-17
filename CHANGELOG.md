@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.0.6](https://github.com/logto-io/go/compare/v1.0.5...v1.0.6) (2024-06-17)
+
+### Fix
+
+* **deps:** update golang.org/x/exp digest to 7f521ea ([#122](https://github.com/logto-io/go/issues/122))
+* **deps:** update golang.org/x/exp digest to fc45aab ([#121](https://github.com/logto-io/go/issues/121))
+* **deps:** update module github.com/gin-gonic/gin to v1.10.0 ([#120](https://github.com/logto-io/go/issues/120))
+* **deps:** update module github.com/gin-contrib/sessions to v1.0.1 ([#117](https://github.com/logto-io/go/issues/117))
+
+
 ## [v1.0.5](https://github.com/logto-io/go/compare/v1.0.4...v1.0.5) (2024-04-25)
 
 ### Feat
