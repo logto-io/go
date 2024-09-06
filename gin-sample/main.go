@@ -58,7 +58,7 @@ func main() {
 	router.GET("/sign-in", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
 		logtoClient := client.NewLogtoClient(logtoConfig, &SessionStorage{session: session})
-		signInUri, err := logtoClient.SignIn(os.Getenv("REDIRECT_URI"))
+		signInUri, err := logtoClient.SignInWithRedirectUri(os.Getenv("REDIRECT_URI"))
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, err.Error())
 			return

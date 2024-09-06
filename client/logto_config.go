@@ -6,12 +6,13 @@ import (
 )
 
 type LogtoConfig struct {
-	Endpoint  string
-	AppId     string
-	AppSecret string
-	Scopes    []string
-	Resources []string
-	Prompt    string
+	Endpoint              string
+	AppId                 string
+	AppSecret             string
+	Scopes                []string
+	Resources             []string
+	Prompt                string
+	IncludeReservedScopes *bool
 }
 
 /**
@@ -21,8 +22,11 @@ type LogtoConfig struct {
  * - Add `ReservedResource.Organization` to resources if `UserScope.Organizations` is included in scopes.
  */
 func (logtoConfig *LogtoConfig) normalized() {
-	for _, defaultScope := range core.DefaultScopes {
-		logtoConfig.Scopes = core.AppendIfNotExisted(logtoConfig.Scopes, defaultScope)
+	includeReservedScopes := logtoConfig.IncludeReservedScopes
+	if includeReservedScopes == nil || *includeReservedScopes {
+		for _, defaultScope := range core.DefaultScopes {
+			logtoConfig.Scopes = core.AppendIfNotExisted(logtoConfig.Scopes, defaultScope)
+		}
 	}
 
 	if slices.Contains(logtoConfig.Scopes, core.UserScopeOrganizations) {

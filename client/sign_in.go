@@ -6,6 +6,16 @@ import (
 	"github.com/logto-io/go/core"
 )
 
+type SignInOptions struct {
+	RedirectUri  string
+	Prompt       string
+	FirstScreen  string
+	Identifiers  []string
+	DirectSignIn *core.DirectSignInOptions
+	LoginHint    string
+	ExtraParams  map[string]string
+}
+
 type SignInSession struct {
 	RedirectUri   string
 	CodeVerifier  string
@@ -13,7 +23,7 @@ type SignInSession struct {
 	State         string
 }
 
-func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
+func (logtoClient *LogtoClient) SignIn(options *SignInOptions) (string, error) {
 	oidcConfig, fetchOidcConfigErr := logtoClient.fetchOidcConfig()
 
 	if fetchOidcConfigErr != nil {
@@ -24,15 +34,26 @@ func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
 	codeChallenge := core.GenerateCodeChallenge(codeVerifier)
 	state := core.GenerateState()
 
+	prompt := options.Prompt
+	if prompt == "" {
+		prompt = logtoClient.logtoConfig.Prompt
+	}
+
 	signInUri, generateSignInUriErr := core.GenerateSignInUri(&core.SignInUriGenerationOptions{
 		AuthorizationEndpoint: oidcConfig.AuthorizationEndpoint,
 		ClientId:              logtoClient.logtoConfig.AppId,
-		RedirectUri:           redirectUri,
+		RedirectUri:           options.RedirectUri,
 		CodeChallenge:         codeChallenge,
 		State:                 state,
 		Scopes:                logtoClient.logtoConfig.Scopes,
 		Resources:             logtoClient.logtoConfig.Resources,
-		Prompt:                logtoClient.logtoConfig.Prompt,
+		Prompt:                prompt,
+		FirstScreen:           options.FirstScreen,
+		Identifiers:           options.Identifiers,
+		DirectSignIn:          options.DirectSignIn,
+		LoginHint:             options.LoginHint,
+		ExtraParams:           options.ExtraParams,
+		IncludeReservedScopes: logtoClient.logtoConfig.IncludeReservedScopes,
 	})
 
 	if generateSignInUriErr != nil {
@@ -40,7 +61,7 @@ func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
 	}
 
 	signInSession := SignInSession{
-		RedirectUri:   redirectUri,
+		RedirectUri:   options.RedirectUri,
 		CodeVerifier:  codeVerifier,
 		CodeChallenge: codeChallenge,
 		State:         state,
@@ -54,4 +75,10 @@ func (logtoClient *LogtoClient) SignIn(redirectUri string) (string, error) {
 	logtoClient.storage.SetItem(StorageKeySignInSession, string(signInSessionJsonValue))
 
 	return signInUri, nil
+}
+
+func (logtoClient *LogtoClient) SignInWithRedirectUri(redirectUri string) (string, error) {
+	return logtoClient.SignIn(&SignInOptions{
+		RedirectUri: redirectUri,
+	})
 }
