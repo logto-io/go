@@ -11,7 +11,7 @@ require (
 	github.com/go-jose/go-jose/v4 v4.0.2
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
+	golang.org/x/exp v0.0.0-20240904232852-e7e105dedf7e
 )
 
 require (
