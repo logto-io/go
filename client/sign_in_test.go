@@ -61,7 +61,7 @@ func TestSignInShouldReturnSignInUriCorrectly(t *testing.T) {
 
 	logtoClient := NewLogtoClient(logtoConfig, storage)
 
-	signInUri, signInErr := logtoClient.SignIn(testRedirectUri)
+	signInUri, signInErr := logtoClient.SignInWithRedirectUri(testRedirectUri)
 	assert.Nil(t, signInErr)
 	assert.Equal(t, testSignInUri, signInUri)
 
