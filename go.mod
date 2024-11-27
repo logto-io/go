@@ -1,4 +1,4 @@
-module github.com/logto-io/go
+module github.com/logto-io/go/v2
 
 go 1.21
 
