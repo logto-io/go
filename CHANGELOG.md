@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.0.0](https://github.com/logto-io/go/compare/v1.0.6...v2.0.0) (2024-11-27)
+
+### Fix
+
+* **deps:** update module github.com/go-jose/go-jose/v4 to v4.0.4 ([#131](https://github.com/logto-io/go/issues/131))
+* **deps:** update golang.org/x/exp digest to e7e105d ([#130](https://github.com/logto-io/go/issues/130))
+* **deps:** update module github.com/agiledragon/gomonkey/v2 to v2.12.0 ([#129](https://github.com/logto-io/go/issues/129))
+
+
 ## [v1.0.6](https://github.com/logto-io/go/compare/v1.0.5...v1.0.6) (2024-06-17)
 
 ### Fix
