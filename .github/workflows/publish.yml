@@ -53,7 +53,7 @@ jobs:
         uses: CasperWA/push-protected@v2
         with:
           token: ${{ secrets.BOT_PAT }}
-          branch: master
+          branch: ${{ github.ref_name }}
           tags: true
           timeout: 20
           acceptable_conclusions: success,skipped
