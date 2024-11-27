@@ -14,19 +14,28 @@
 
 The repo for SDKs and working samples written in Go.
 
-Check out the [Go SDK tutorial](https://docs.logto.io/sdk/go/) or [Go reference](https://pkg.go.dev/github.com/logto-io/go) for more information.
+Check out the [Go SDK tutorial](https://docs.logto.io/quick-starts/go) or [Go reference](https://pkg.go.dev/github.com/logto-io/go/v2) for more information.
 
 ## Installation
 
-To install Logto Go SDK, use `go get`:
+To install Logto Go SDK, use `go get`.
+
+For core package:
 
 ```bash
-go get github.com/logto-io/go
+go get github.com/logto-io/go/v2/core
+```
+
+For client package:
+
+```bash
+go get github.com/logto-io/go/v2/client
 ```
 
 To update Logto Go SDK to the latest version, use:
 ```bash
-go get -u github.com/logto-io/go
+go get -u github.com/logto-io/go/v2/core
+go get -u github.com/logto-io/go/v2/client
 ```
 
 ## Packages
