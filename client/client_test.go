@@ -8,7 +8,7 @@ import (
 
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/go-jose/go-jose/v4"
-	"github.com/logto-io/go/core"
+	"github.com/logto-io/go/v2/core"
 	"github.com/stretchr/testify/assert"
 )
 

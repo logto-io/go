@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/logto-io/go/core"
+	"github.com/logto-io/go/v2/core"
 	"golang.org/x/exp/slices"
 )
 
