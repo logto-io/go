@@ -1,5 +1,22 @@
 # Changelog
 
+## [v2.1.0](https://github.com/logto-io/go/compare/v2.0.0...v2.1.0) (2025-05-30)
+
+### Feat
+
+* enhance access token management with options for resource and organization ([#167](https://github.com/logto-io/go/issues/167))
+
+### Fix
+
+* **deps:** update module github.com/jarcoal/httpmock to v1.4.0 ([#157](https://github.com/logto-io/go/issues/157))
+* **deps:** update golang.org/x/exp digest to 7e4ce0a ([#150](https://github.com/logto-io/go/issues/150))
+* **deps:** update module github.com/agiledragon/gomonkey/v2 to v2.13.0 ([#152](https://github.com/logto-io/go/issues/152))
+* **deps:** update module github.com/go-jose/go-jose/v4 to v4.0.5 [security] ([#154](https://github.com/logto-io/go/issues/154))
+* **deps:** update module github.com/stretchr/testify to v1.10.0 ([#139](https://github.com/logto-io/go/issues/139))
+* **deps:** update module github.com/gin-contrib/sessions to v1.0.2 ([#144](https://github.com/logto-io/go/issues/144))
+* **deps:** update golang.org/x/exp digest to 7588d65 ([#149](https://github.com/logto-io/go/issues/149))
+
+
 ## [v2.0.0](https://github.com/logto-io/go/compare/v1.0.6...v2.0.0) (2024-11-27)
 
 ### Fix
