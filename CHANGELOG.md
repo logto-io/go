@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.2.0](https://github.com/logto-io/go/compare/v2.1.0...v2.2.0) (2025-07-16)
+
+### Feat
+
+* support custom HTTP client injection ([#168](https://github.com/logto-io/go/issues/168))
+
+
 ## [v2.1.0](https://github.com/logto-io/go/compare/v2.0.0...v2.1.0) (2025-05-30)
 
 ### Feat
