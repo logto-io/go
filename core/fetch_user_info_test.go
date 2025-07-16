@@ -2,13 +2,15 @@ package core
 
 import (
 	"encoding/json"
+	"net/http"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFetchUserInfo(t *testing.T) {
+func TestFetchUserInfoWithClient(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -36,7 +38,12 @@ func TestFetchUserInfo(t *testing.T) {
 		httpmock.NewStringResponder(200, mockResponse),
 	)
 
-	userInfoResponse, fetchError := FetchUserInfo(userInfoEndpoint, "accessToken")
+	// Test with custom HTTP client
+	customClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	userInfoResponse, fetchError := FetchUserInfoWithClient(customClient, userInfoEndpoint, "accessToken")
 	assert.Nil(t, fetchError)
 
 	var testUserInfoResponse UserInfoResponse
@@ -44,4 +51,30 @@ func TestFetchUserInfo(t *testing.T) {
 	assert.Nil(t, unmarshalErr)
 
 	assert.Equal(t, testUserInfoResponse, userInfoResponse)
+}
+
+// TestFetchUserInfoDeprecated tests that the deprecated function delegates to the new one
+func TestFetchUserInfoDeprecated(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	userInfoEndpoint := "http://example.com/oidc/jwks"
+	mockResponse := `{` +
+		`"sub": "sub",` +
+		`"name": "name",` +
+		`"username": "username"` +
+		`}`
+
+	httpmock.RegisterResponder(
+		"GET",
+		userInfoEndpoint,
+		httpmock.NewStringResponder(200, mockResponse),
+	)
+
+	// Test that deprecated function still works by calling the new implementation
+	userInfoResponse, fetchError := FetchUserInfo(userInfoEndpoint, "accessToken")
+	assert.Nil(t, fetchError)
+	assert.Equal(t, "sub", userInfoResponse.Sub)
+	assert.Equal(t, "name", userInfoResponse.Name)
+	assert.Equal(t, "username", userInfoResponse.Username)
 }

@@ -31,6 +31,16 @@ type GetOrganizationTokenClaimsOptions struct {
 	OrganizationId string
 }
 
+// LogtoClientOption is a functional option for configuring LogtoClient
+type LogtoClientOption func(*LogtoClient)
+
+// WithHttpClient sets a custom HTTP client for the LogtoClient
+func WithHttpClient(client *http.Client) LogtoClientOption {
+	return func(c *LogtoClient) {
+		c.httpClient = client
+	}
+}
+
 type LogtoClient struct {
 	httpClient     *http.Client
 	logtoConfig    *LogtoConfig
@@ -38,13 +48,18 @@ type LogtoClient struct {
 	accessTokenMap map[string]AccessToken
 }
 
-func NewLogtoClient(config *LogtoConfig, storage Storage) *LogtoClient {
+func NewLogtoClient(config *LogtoConfig, storage Storage, opts ...LogtoClientOption) *LogtoClient {
 	config.normalized()
 	logtoClient := LogtoClient{
 		httpClient:     &http.Client{},
 		logtoConfig:    config,
 		storage:        storage,
 		accessTokenMap: make(map[string]AccessToken),
+	}
+
+	// Apply options
+	for _, opt := range opts {
+		opt(&logtoClient)
 	}
 
 	logtoClient.loadAccessTokenMap()
@@ -236,5 +251,5 @@ func (logtoClient *LogtoClient) FetchUserInfo() (core.UserInfoResponse, error) {
 		return core.UserInfoResponse{}, getAccessTokenErr
 	}
 
-	return core.FetchUserInfo(oidcConfig.UserinfoEndpoint, accessToken.Token)
+	return core.FetchUserInfoWithClient(logtoClient.httpClient, oidcConfig.UserinfoEndpoint, accessToken.Token)
 }

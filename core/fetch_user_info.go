@@ -2,9 +2,10 @@ package core
 
 import "net/http"
 
-func FetchUserInfo(userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
-	client := &http.Client{}
-
+// FetchUserInfoWithClient fetches user info using a custom HTTP client.
+// This function allows you to use a custom HTTP client for observability,
+// tracing, or other custom configurations.
+func FetchUserInfoWithClient(client *http.Client, userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
 	request, createRequestErr := http.NewRequest("GET", userInfoEndpoint, nil)
 
 	if createRequestErr != nil {
@@ -29,4 +30,10 @@ func FetchUserInfo(userInfoEndpoint, accessToken string) (UserInfoResponse, erro
 	}
 
 	return userInfoResponse, nil
+}
+
+// FetchUserInfo fetches user info using the default HTTP client.
+// Deprecated: Use FetchUserInfoWithClient instead for better flexibility and observability support.
+func FetchUserInfo(userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
+	return FetchUserInfoWithClient(&http.Client{}, userInfoEndpoint, accessToken)
 }
