@@ -251,5 +251,5 @@ func (logtoClient *LogtoClient) FetchUserInfo() (core.UserInfoResponse, error) {
 		return core.UserInfoResponse{}, getAccessTokenErr
 	}
 
-	return core.FetchUserInfo(oidcConfig.UserinfoEndpoint, accessToken.Token)
+	return core.FetchUserInfoWithClient(logtoClient.httpClient, oidcConfig.UserinfoEndpoint, accessToken.Token)
 }
