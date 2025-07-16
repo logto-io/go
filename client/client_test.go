@@ -280,14 +280,24 @@ func TestNewLogtoClientShouldApplyMultipleOptions(t *testing.T) {
 		Timeout: 5 * time.Second,
 	}
 
+	// Create a mock second option for demonstration
+	var appliedSecondOption bool
+	mockSecondOption := func(client *LogtoClient) {
+		appliedSecondOption = true
+	}
+
 	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{},
 		WithHttpClient(customClient),
-		// Future options can be added here
+		mockSecondOption,
 	)
 
+	// Verify first option (WithHttpClient) was applied
 	assert.NotNil(t, logtoClient.httpClient)
 	assert.Equal(t, customClient, logtoClient.httpClient)
 	assert.Equal(t, 5*time.Second, logtoClient.httpClient.Timeout)
+
+	// Verify second option was applied
+	assert.True(t, appliedSecondOption, "Second option should have been applied")
 }
 
 func TestWithHttpClientShouldReturnValidOption(t *testing.T) {
