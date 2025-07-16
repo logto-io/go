@@ -254,3 +254,59 @@ func TestFetchUserInfoShouldReturnErrorIfGetAccessTokenFailed(t *testing.T) {
 
 	assert.Equal(t, testGetAccessTokenErr, fetchUserInfoErr)
 }
+
+func TestNewLogtoClientShouldUseDefaultHttpClientWhenNoOptionsProvided(t *testing.T) {
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+	
+	assert.NotNil(t, logtoClient.httpClient)
+	// The default HTTP client should be a basic http.Client
+	assert.IsType(t, &http.Client{}, logtoClient.httpClient)
+}
+
+func TestNewLogtoClientShouldUseCustomHttpClientWhenWithHttpClientOptionProvided(t *testing.T) {
+	customClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{}, WithHttpClient(customClient))
+	
+	assert.NotNil(t, logtoClient.httpClient)
+	assert.Equal(t, customClient, logtoClient.httpClient)
+	assert.Equal(t, 10*time.Second, logtoClient.httpClient.Timeout)
+}
+
+func TestNewLogtoClientShouldApplyMultipleOptions(t *testing.T) {
+	customClient := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+	
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{}, 
+		WithHttpClient(customClient),
+		// Future options can be added here
+	)
+	
+	assert.NotNil(t, logtoClient.httpClient)
+	assert.Equal(t, customClient, logtoClient.httpClient)
+	assert.Equal(t, 5*time.Second, logtoClient.httpClient.Timeout)
+}
+
+func TestWithHttpClientShouldReturnValidOption(t *testing.T) {
+	customClient := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	
+	option := WithHttpClient(customClient)
+	
+	assert.NotNil(t, option)
+	
+	// Test that the option function works correctly
+	logtoClient := &LogtoClient{
+		httpClient: &http.Client{}, // Default client
+	}
+	
+	// Apply the option
+	option(logtoClient)
+	
+	assert.Equal(t, customClient, logtoClient.httpClient)
+	assert.Equal(t, 30*time.Second, logtoClient.httpClient.Timeout)
+}
