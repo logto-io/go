@@ -41,11 +41,19 @@ func WithHttpClient(client *http.Client) LogtoClientOption {
 	}
 }
 
+// WithTrustForwardedHeader sets whether to trust X-Forwarded-* headers for checking the request's origin, useful when behind a reverse proxy.
+func WithTrustForwardedHeader(b bool) LogtoClientOption {
+	return func(c *LogtoClient) {
+		c.trustForwardedHeader = b
+	}
+}
+
 type LogtoClient struct {
-	httpClient     *http.Client
-	logtoConfig    *LogtoConfig
-	storage        Storage
-	accessTokenMap map[string]AccessToken
+	httpClient           *http.Client
+	logtoConfig          *LogtoConfig
+	storage              Storage
+	accessTokenMap       map[string]AccessToken
+	trustForwardedHeader bool
 }
 
 func NewLogtoClient(config *LogtoConfig, storage Storage, opts ...LogtoClientOption) *LogtoClient {

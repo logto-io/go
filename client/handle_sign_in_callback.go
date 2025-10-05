@@ -17,6 +17,9 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 	}
 
 	callbackUri := GetOriginRequestUrl(request)
+	if logtoClient.trustForwardedHeader {
+		callbackUri = getForwaredRequestUrl(request)
+	}
 	code, retrieveCodeErr := core.VerifyAndParseCodeFromCallbackUri(callbackUri, signInSession.RedirectUri, signInSession.State)
 	if retrieveCodeErr != nil {
 		return retrieveCodeErr
