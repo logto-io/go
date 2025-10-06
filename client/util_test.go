@@ -130,3 +130,43 @@ func createTestToken(resource string) (string, error) {
 
 	return token, nil
 }
+
+func TestGetForwaredRequestUrlShouldReturnXForwardedIfPresent(t *testing.T) {
+	req, err := http.NewRequest("GET", "http://example.com/path?query=1", nil)
+	assert.Nil(t, err)
+	// Ensure RequestURI is set like in real servers
+	req.RequestURI = "/path?query=1"
+
+	req.Header.Add("X-Forwarded-Host", "forwarded.example.com")
+	req.Header.Add("X-Forwarded-Url", "/forwarded-path?query=2")
+	req.Header.Add("X-Forwarded-Proto", "https")
+
+	url := getForwaredRequestUrl(req)
+
+	assert.Equal(t, "https://forwarded.example.com/forwarded-path?query=2", url)
+}
+
+func TestGetForwaredRequestHostShouldFallbackToRequestHost(t *testing.T) {
+	req, _ := http.NewRequest("GET", "http://example.com/", nil)
+	req.RequestURI = "/"
+
+	host := getForwaredRequestHost(req)
+
+	assert.Equal(t, "example.com", host)
+
+	req.Header.Add("X-Forwarded-Host", "proxied.example.com")
+	host = getForwaredRequestHost(req)
+	assert.Equal(t, "proxied.example.com", host)
+}
+
+func TestGetForwaredRequestRequestUriShouldFallbackToRequestURI(t *testing.T) {
+	req, _ := http.NewRequest("GET", "http://example.com/api", nil)
+	req.RequestURI = "/api"
+
+	uri := getForwaredRequestRequestUri(req)
+	assert.Equal(t, "/api", uri)
+
+	req.Header.Add("X-Forwarded-Url", "/proxied/api?x=1")
+	uri = getForwaredRequestRequestUri(req)
+	assert.Equal(t, "/proxied/api?x=1", uri)
+}
