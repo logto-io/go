@@ -1,6 +1,6 @@
 module github.com/logto-io/go/v2
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.27.0
 
@@ -11,7 +11,7 @@ require (
 	github.com/go-jose/go-jose/v4 v4.1.4
 	github.com/jarcoal/httpmock v1.4.2
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
+	golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa
 )
 
 require (
