@@ -85,6 +85,26 @@ if errors.As(err, &responseError) {
 }
 ```
 
+## Running behind a reverse proxy
+
+By default, `HandleSignInCallback` reconstructs the callback URI from the incoming request, inferring the scheme from the TLS state (or the `X-Forwarded-Proto` header) and the host from the `Host` header.
+
+If your application runs behind reverse proxies or multi-layer gateways (e.g., Cloudflare -> ALB -> Nginx, or Firebase Hosting -> Cloud Run), the scheme and host seen by your application may differ from the public address, causing sign-in callbacks to fail with a "callback uri not match redirect uri" error. Trusting these headers also exposes the application to Host header injection.
+
+To avoid this, set the optional `BaseUrl` in `LogtoConfig` to the public base URL of your application. It must be an absolute URL with a scheme and may include a path prefix:
+
+```go
+logtoConfig := &client.LogtoConfig{
+	Endpoint:  "<your-logto-endpoint>",
+	AppId:     "<your-application-id>",
+	AppSecret: "<your-application-secret>",
+	// The public base URL of your application
+	BaseUrl:   "https://my-app.com",
+}
+```
+
+When `BaseUrl` is set, the callback URI is constructed by directly appending the incoming request URI (path and query) to it, and the request's `Host` and `X-Forwarded-Proto` headers are no longer used. Make sure the concatenated result matches the public callback URL registered as the redirect URI — for example, if a proxy strips a path prefix before forwarding requests to your application, include that prefix in `BaseUrl`.
+
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)
