@@ -47,6 +47,32 @@ go get -u github.com/logto-io/go/v2/client
 | core   | Logto SDK core package               |
 | client | Logto client built upon the `core` package |
 
+## User info and ID token claims
+
+`client.FetchUserInfo` and `client.GetIdTokenClaims` return `core.UserInfoResponse` and `core.IdTokenClaims` respectively. Besides basic claims such as `sub`, `name`, `email`, both types model the [standard claims](https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims) included in the `profile` scope: `family_name`, `given_name`, `middle_name`, `nickname`, `preferred_username`, `profile`, `website`, `gender`, `birthdate`, `zoneinfo`, `locale`, as well as `created_at` and `updated_at`. Logto only returns these standard claims when their values are not empty, so absent claims are left as zero values.
+
+To access claims that are not modeled as struct fields, e.g. custom claims, use the `GetClaim` method:
+
+```go
+userInfo, err := logtoClient.FetchUserInfo()
+if err != nil {
+	// Handle error
+}
+
+if value, ok := userInfo.GetClaim("custom_claim"); ok {
+	// Use the claim value
+}
+
+idTokenClaims, err := logtoClient.GetIdTokenClaims()
+if err != nil {
+	// Handle error
+}
+
+if value, ok := idTokenClaims.GetClaim("custom_claim"); ok {
+	// Use the claim value
+}
+```
+
 ## Error handling
 
 SDK functions return structured errors that can be inspected with `errors.Is` and `errors.As` to turn failures into user actions.

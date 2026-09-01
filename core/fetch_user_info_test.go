@@ -25,6 +25,11 @@ func TestFetchUserInfoWithClient(t *testing.T) {
 		`"email_verified": true,` +
 		`"phone_number": "12345678",` +
 		`"phone_number_verified": true,` +
+		`"family_name": "Doe",` +
+		`"given_name": "John",` +
+		`"created_at": 1700000000000,` +
+		`"updated_at": 1700000001000,` +
+		`"custom_claim": "custom_value",` +
 		`"custom_data": {"level": 1},` +
 		`"identities": {"google": {"id": 1}},` +
 		`"roles": ["role1", "role2"],` +
@@ -52,6 +57,16 @@ func TestFetchUserInfoWithClient(t *testing.T) {
 	assert.Nil(t, unmarshalErr)
 
 	assert.Equal(t, testUserInfoResponse, userInfoResponse)
+
+	assert.Equal(t, "Doe", userInfoResponse.FamilyName)
+	assert.Equal(t, "John", userInfoResponse.GivenName)
+	assert.Equal(t, int64(1700000000000), userInfoResponse.CreatedAt)
+	assert.Equal(t, int64(1700000001000), userInfoResponse.UpdatedAt)
+
+	// Claims that are not modeled as struct fields are accessible via GetClaim.
+	customClaim, ok := userInfoResponse.GetClaim("custom_claim")
+	assert.True(t, ok)
+	assert.Equal(t, "custom_value", customClaim)
 }
 
 func TestFetchUserInfoWithClientShouldReturnResponseErrorOnErrorResponse(t *testing.T) {
