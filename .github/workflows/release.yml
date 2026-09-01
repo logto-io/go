@@ -27,7 +27,7 @@ jobs:
           > /tmp/changelog.txt
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.BOT_PAT }}
           body_path: /tmp/changelog.txt

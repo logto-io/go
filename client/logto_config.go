@@ -1,8 +1,9 @@
 package client
 
 import (
+	"slices"
+
 	"github.com/logto-io/go/v2/core"
-	"golang.org/x/exp/slices"
 )
 
 type LogtoConfig struct {
