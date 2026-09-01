@@ -2,9 +2,8 @@ package client
 
 import (
 	"net/http"
+	"slices"
 	"time"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/logto-io/go/v2/core"
 )
