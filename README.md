@@ -47,6 +47,29 @@ go get -u github.com/logto-io/go/v2/client
 | core   | Logto SDK core package               |
 | client | Logto client built upon the `core` package |
 
+## Error handling
+
+When the Logto server responds with a non-200 status code, SDK functions return a `*core.ResponseError` that carries the HTTP status code and the parsed OIDC error fields. Use `errors.As` to inspect it and turn server errors into user actions.
+
+For example, fetching user info with an expired or revoked refresh token fails with the OIDC error code `invalid_grant`, which means the user needs to sign in again:
+
+```go
+import (
+	"errors"
+
+	"github.com/logto-io/go/v2/core"
+)
+
+userInfo, err := logtoClient.FetchUserInfo()
+if err != nil {
+	var responseError *core.ResponseError
+	if errors.As(err, &responseError) && responseError.ErrorCode == "invalid_grant" {
+		// The refresh token is expired or revoked, redirect the user to sign in again.
+	}
+	// Handle other errors.
+}
+```
+
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)
