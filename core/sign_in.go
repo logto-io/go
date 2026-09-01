@@ -95,11 +95,6 @@ func GenerateSignInUri(option *SignInUriGenerationOptions) (string, error) {
 		}
 	}
 
-	unescapedQueries, unescapeQueryErr := url.QueryUnescape(queries.Encode())
-
-	if unescapeQueryErr != nil {
-		return "", unescapeQueryErr
-	}
-
-	return uri.String() + "?" + unescapedQueries, nil
+	uri.RawQuery = queries.Encode()
+	return uri.String(), nil
 }

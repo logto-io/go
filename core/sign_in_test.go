@@ -7,7 +7,7 @@ import (
 )
 
 func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
-	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=login&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=login&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&resource=resourceA&resource=resourceB&response_type=code&scope=openid+offline_access+profile&state=state"
 
 	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
@@ -25,7 +25,7 @@ func TestGenerateSignInUriShouldGenerateCorrectUri(t *testing.T) {
 }
 
 func TestGenerateSignInUriShouldContainReservedScopesByDefault(t *testing.T) {
-	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&resource=resourceA&resource=resourceB&response_type=code&scope=openid+offline_access+profile&state=state"
 
 	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
@@ -42,7 +42,7 @@ func TestGenerateSignInUriShouldContainReservedScopesByDefault(t *testing.T) {
 }
 
 func TestGenerateSignInUriShouldContainReservedScopesAndExtraScopes(t *testing.T) {
-	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile extra_scope&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&resource=resourceA&resource=resourceB&response_type=code&scope=openid+offline_access+profile+extra_scope&state=state"
 
 	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
@@ -60,7 +60,7 @@ func TestGenerateSignInUriShouldContainReservedScopesAndExtraScopes(t *testing.T
 }
 
 func TestGenerateSignInUriShouldGenerateUriWithConsentAsThePromptValue(t *testing.T) {
-	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&resource=resourceA&resource=resourceB&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&resource=resourceA&resource=resourceB&response_type=code&scope=openid+offline_access+profile&state=state"
 
 	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
@@ -77,7 +77,7 @@ func TestGenerateSignInUriShouldGenerateUriWithConsentAsThePromptValue(t *testin
 }
 
 func TestGenerateSignInUriShouldNotContainResourcesIfNoResourcesAreProvided(t *testing.T) {
-	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https://example.com/callback&response_type=code&scope=openid offline_access profile&state=state"
+	testSignInUri := "https://example.com/authorize?client_id=clientId&code_challenge=codeChallenge&code_challenge_method=S256&prompt=consent&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&response_type=code&scope=openid+offline_access+profile&state=state"
 
 	signInUri, generateSignInUriErr := GenerateSignInUri(&SignInUriGenerationOptions{
 		AuthorizationEndpoint: "https://example.com/authorize",
