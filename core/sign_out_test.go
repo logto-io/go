@@ -7,7 +7,7 @@ import (
 )
 
 func TestGenerateSignOutUriShouldGenerateCorrectUri(t *testing.T) {
-	testSignOutUri := "https://example.com/logout?client_id=clientId&post_logout_redirect_uri=https://example.com/callback"
+	testSignOutUri := "https://example.com/logout?client_id=clientId&post_logout_redirect_uri=https%3A%2F%2Fexample.com%2Fcallback"
 	signOutUri, generateSignOutUriErr := GenerateSignOutUri(&SignOutUriGenerationOptions{
 		EndSessionEndpoint:    "https://example.com/logout",
 		ClientId:              "clientId",

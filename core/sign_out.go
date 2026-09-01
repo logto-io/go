@@ -22,10 +22,6 @@ func GenerateSignOutUri(option *SignOutUriGenerationOptions) (string, error) {
 		queries.Add("post_logout_redirect_uri", option.PostLogoutRedirectUri)
 	}
 
-	unescapedQueries, unescapeQueryErr := url.QueryUnescape(queries.Encode())
-	if unescapeQueryErr != nil {
-		return "", unescapeQueryErr
-	}
-
-	return uri.String() + "?" + unescapedQueries, nil
+	uri.RawQuery = queries.Encode()
+	return uri.String(), nil
 }
