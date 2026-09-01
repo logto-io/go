@@ -8,13 +8,16 @@ import "fmt"
 // are parsed into the corresponding struct fields. Otherwise only StatusCode
 // and RawBody are populated.
 //
-// Use errors.As to inspect the error details, e.g. to detect an invalid
-// (expired or revoked) refresh token and prompt the user to sign in again:
+// Use errors.As to inspect the details of a failed request:
 //
 //	var responseError *core.ResponseError
-//	if errors.As(err, &responseError) && responseError.ErrorCode == "invalid_grant" {
-//		// Redirect the user to sign in again.
+//	if errors.As(err, &responseError) {
+//		log.Printf("status: %d, code: %s", responseError.StatusCode, responseError.Code)
 //	}
+//
+// When using LogtoClient, prefer the sentinel errors in the client package for
+// well-known scenarios: e.g. a rejected refresh token is reported as
+// ErrNotAuthenticated.
 type ResponseError struct {
 	// StatusCode is the HTTP status code of the response.
 	StatusCode int `json:"-"`

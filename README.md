@@ -49,24 +49,39 @@ go get -u github.com/logto-io/go/v2/client
 
 ## Error handling
 
-When the Logto server responds with a non-200 status code, SDK functions return a `*core.ResponseError` that carries the HTTP status code and the parsed OIDC error fields. Use `errors.As` to inspect it and turn server errors into user actions.
+SDK functions return structured errors that can be inspected with `errors.Is` and `errors.As` to turn failures into user actions.
 
-For example, fetching user info with an expired or revoked refresh token fails with the OIDC error code `invalid_grant`, which means the user needs to sign in again:
+The most common scenario: the stored refresh token has expired or been revoked, so the session cannot be renewed. `LogtoClient` methods (e.g. `GetAccessToken`, `FetchUserInfo`) report this as `client.ErrNotAuthenticated`, the same error returned when the user has never signed in:
 
 ```go
 import (
 	"errors"
 
-	"github.com/logto-io/go/v2/core"
+	"github.com/logto-io/go/v2/client"
 )
 
 userInfo, err := logtoClient.FetchUserInfo()
 if err != nil {
-	var responseError *core.ResponseError
-	if errors.As(err, &responseError) && responseError.ErrorCode == "invalid_grant" {
-		// The refresh token is expired or revoked, redirect the user to sign in again.
+	if errors.Is(err, client.ErrNotAuthenticated) {
+		// No valid session, redirect the user to sign in again.
 	}
 	// Handle other errors.
+}
+```
+
+For everything else, any non-200 response from the Logto server is a `*core.ResponseError` carrying the HTTP status code, the parsed OIDC and Logto error fields, and the raw body:
+
+```go
+import "github.com/logto-io/go/v2/core"
+
+var responseError *core.ResponseError
+if errors.As(err, &responseError) {
+	log.Printf(
+		"logto request failed: status=%d, code=%s, description=%s",
+		responseError.StatusCode,
+		responseError.Code,
+		responseError.ErrorDescription,
+	)
 }
 ```
 
