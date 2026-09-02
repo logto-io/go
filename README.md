@@ -47,6 +47,44 @@ go get -u github.com/logto-io/go/v2/client
 | core   | Logto SDK core package               |
 | client | Logto client built upon the `core` package |
 
+## Error handling
+
+SDK functions return structured errors that can be inspected with `errors.Is` and `errors.As` to turn failures into user actions.
+
+The most common scenario: the stored refresh token has expired or been revoked, so the session cannot be renewed. `LogtoClient` methods (e.g. `GetAccessToken`, `FetchUserInfo`) report this as `client.ErrNotAuthenticated`, the same error returned when the user has never signed in:
+
+```go
+import (
+	"errors"
+
+	"github.com/logto-io/go/v2/client"
+)
+
+userInfo, err := logtoClient.FetchUserInfo()
+if err != nil {
+	if errors.Is(err, client.ErrNotAuthenticated) {
+		// No valid session, redirect the user to sign in again.
+	}
+	// Handle other errors.
+}
+```
+
+For everything else, any non-200 response from the Logto server is a `*core.ResponseError` carrying the HTTP status code, the parsed OIDC and Logto error fields, and the raw body:
+
+```go
+import "github.com/logto-io/go/v2/core"
+
+var responseError *core.ResponseError
+if errors.As(err, &responseError) {
+	log.Printf(
+		"logto request failed: status=%d, code=%s, description=%s",
+		responseError.StatusCode,
+		responseError.Code,
+		responseError.ErrorDescription,
+	)
+}
+```
+
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)

@@ -1,6 +1,8 @@
 package client
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -148,6 +150,12 @@ func (logtoClient *LogtoClient) GetAccessTokenWithOptions(options GetAccessToken
 	})
 
 	if refreshTokenErr != nil {
+		var responseError *core.ResponseError
+		// An invalid_grant error from the refresh token grant means the refresh
+		// token is no longer valid and the user has to sign in again.
+		if errors.As(refreshTokenErr, &responseError) && responseError.ErrorCode == invalidGrantErrorCode {
+			return AccessToken{}, fmt.Errorf("%w: %w", ErrNotAuthenticated, refreshTokenErr)
+		}
 		return AccessToken{}, refreshTokenErr
 	}
 

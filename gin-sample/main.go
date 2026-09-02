@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 	"github.com/logto-io/go/v2/client"
+	"github.com/logto-io/go/v2/core"
 )
 
 var (
@@ -136,7 +138,27 @@ func main() {
 			userInfoResponse, fetchUserInfoErr := logtoClient.FetchUserInfo()
 
 			if fetchUserInfoErr != nil {
-				ctx.String(http.StatusOK, fetchUserInfoErr.Error())
+				// The stored refresh token is expired or revoked, so the
+				// session cannot be renewed. Ask the user to sign in again.
+				if errors.Is(fetchUserInfoErr, client.ErrNotAuthenticated) {
+					ctx.Redirect(http.StatusTemporaryRedirect, "/sign-in")
+					return
+				}
+
+				// For other server errors, the details are available on
+				// *core.ResponseError.
+				var responseError *core.ResponseError
+				if errors.As(fetchUserInfoErr, &responseError) {
+					ctx.String(
+						http.StatusBadGateway,
+						"Failed to fetch user info: status=%d, code=%s",
+						responseError.StatusCode,
+						responseError.Code,
+					)
+					return
+				}
+
+				ctx.String(http.StatusInternalServerError, fetchUserInfoErr.Error())
 				return
 			}
 

@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 	"time"
@@ -51,6 +52,27 @@ func TestFetchUserInfoWithClient(t *testing.T) {
 	assert.Nil(t, unmarshalErr)
 
 	assert.Equal(t, testUserInfoResponse, userInfoResponse)
+}
+
+func TestFetchUserInfoWithClientShouldReturnResponseErrorOnErrorResponse(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	userInfoEndpoint := "http://example.com/oidc/me"
+	mockResponse := `{"code":"oidc.invalid_grant","message":"Grant request is invalid.","error":"invalid_grant","error_description":"grant request is invalid"}`
+
+	httpmock.RegisterResponder(
+		"GET",
+		userInfoEndpoint,
+		httpmock.NewStringResponder(400, mockResponse),
+	)
+
+	_, fetchError := FetchUserInfoWithClient(&http.Client{}, userInfoEndpoint, "expiredAccessToken")
+
+	var responseError *ResponseError
+	assert.True(t, errors.As(fetchError, &responseError))
+	assert.Equal(t, http.StatusBadRequest, responseError.StatusCode)
+	assert.Equal(t, "invalid_grant", responseError.ErrorCode)
 }
 
 // TestFetchUserInfoDeprecated tests that the deprecated function delegates to the new one

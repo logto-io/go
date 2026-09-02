@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
@@ -15,7 +14,13 @@ func parseDataFromResponse(response *http.Response, dest interface{}) error {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d, response body: %s", response.StatusCode, body)
+		responseError := &ResponseError{
+			StatusCode: response.StatusCode,
+			RawBody:    string(body),
+		}
+		// The error fields stay empty when the body is not a JSON object.
+		_ = json.Unmarshal(body, responseError)
+		return responseError
 	}
 
 	return json.Unmarshal(body, &dest)

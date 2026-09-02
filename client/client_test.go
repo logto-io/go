@@ -51,6 +51,83 @@ func TestGetAccessTokenShouldReturnNotAuthenticatedErrIfNoIdTokenAvailable(t *te
 	assert.Equal(t, ErrNotAuthenticated, getAccessTokenErr)
 }
 
+func TestGetAccessTokenShouldReturnNotAuthenticatedErrWhenRefreshTokenIsRejected(t *testing.T) {
+	var logtoClientSpy *LogtoClient
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		return core.OidcConfigResponse{}, nil
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
+	testResponseError := &core.ResponseError{
+		StatusCode: http.StatusBadRequest,
+		Code:       "oidc.invalid_grant",
+		Message:    "Grant request is invalid.",
+		ErrorCode:  "invalid_grant",
+	}
+
+	patchesForFetchTokenByRefreshToken := gomonkey.ApplyFunc(
+		core.FetchTokenByRefreshToken,
+		func(client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
+			return core.RefreshTokenResponse{}, testResponseError
+		},
+	)
+	defer patchesForFetchTokenByRefreshToken.Reset()
+
+	logtoClient := NewLogtoClient(
+		&LogtoConfig{},
+		&TestStorage{
+			data: map[string]string{
+				StorageKeyIdToken:      "id token",
+				StorageKeyRefreshToken: "expired refresh token",
+			},
+		},
+	)
+
+	_, getAccessTokenErr := logtoClient.GetAccessToken("")
+
+	assert.True(t, errors.Is(getAccessTokenErr, ErrNotAuthenticated))
+
+	var responseError *core.ResponseError
+	assert.True(t, errors.As(getAccessTokenErr, &responseError))
+	assert.Equal(t, testResponseError, responseError)
+}
+
+func TestGetAccessTokenShouldPropagateOtherResponseErrorsAsIs(t *testing.T) {
+	var logtoClientSpy *LogtoClient
+	patchesForFetchOidcConfig := gomonkey.ApplyPrivateMethod(logtoClientSpy, "fetchOidcConfig", func(_ *LogtoClient) (core.OidcConfigResponse, error) {
+		return core.OidcConfigResponse{}, nil
+	})
+	defer patchesForFetchOidcConfig.Reset()
+
+	testResponseError := &core.ResponseError{
+		StatusCode: http.StatusInternalServerError,
+		ErrorCode:  "server_error",
+	}
+
+	patchesForFetchTokenByRefreshToken := gomonkey.ApplyFunc(
+		core.FetchTokenByRefreshToken,
+		func(client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
+			return core.RefreshTokenResponse{}, testResponseError
+		},
+	)
+	defer patchesForFetchTokenByRefreshToken.Reset()
+
+	logtoClient := NewLogtoClient(
+		&LogtoConfig{},
+		&TestStorage{
+			data: map[string]string{
+				StorageKeyIdToken:      "id token",
+				StorageKeyRefreshToken: "refresh token",
+			},
+		},
+	)
+
+	_, getAccessTokenErr := logtoClient.GetAccessToken("")
+
+	assert.False(t, errors.Is(getAccessTokenErr, ErrNotAuthenticated))
+	assert.Equal(t, testResponseError, getAccessTokenErr)
+}
+
 func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIfLocalAccessTokenIsExpired(t *testing.T) {
 	testAccessToken := "refreshed access token"
 	testRefreshToken := "refresh token"
