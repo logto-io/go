@@ -1,5 +1,20 @@
 # Changelog
 
+## [v2.3.0](https://github.com/logto-io/go/compare/v2.2.0...v2.3.0) (2026-09-02)
+
+### Feat
+
+* support request context propagation ([#210](https://github.com/logto-io/go/issues/210))
+* support standard profile claims and raw claim access ([#207](https://github.com/logto-io/go/issues/207))
+* add BaseUrl config for apps behind reverse proxies ([#206](https://github.com/logto-io/go/issues/206))
+* add structured ResponseError for non-200 responses ([#205](https://github.com/logto-io/go/issues/205))
+
+### Fix
+
+* dont manually unescape queries ([#181](https://github.com/logto-io/go/issues/181))
+* **gin-sample:** return early on id token claims error ([#208](https://github.com/logto-io/go/issues/208))
+
+
 ## [v2.2.0](https://github.com/logto-io/go/compare/v2.1.0...v2.2.0) (2025-07-16)
 
 ### Feat
