@@ -36,9 +36,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Go Env
+        uses: actions/setup-go@v7
+        with:
+          go-version: '^1.19'
+
       # https://pkg.go.dev/about#adding-a-package
       - name: Request proxy.golang.org to update go module index
-        env:
-          MODULE_NAME: github.com/logto-io/go
         run: |
-          curl "https://proxy.golang.org/$MODULE_NAME/@v/${GITHUB_REF#refs/*/}.info"
+          MODULE_NAME="$(go list -m)"
+          curl -fsS "https://proxy.golang.org/$MODULE_NAME/@v/${GITHUB_REF#refs/*/}.info"
