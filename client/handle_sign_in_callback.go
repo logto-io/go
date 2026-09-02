@@ -36,7 +36,7 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 		return fetchOidcConfigErr
 	}
 
-	codeTokenResponse, fetchTokenErr := core.FetchTokenByAuthorizationCode(logtoClient.httpClient, &core.FetchTokenByAuthorizationCodeOptions{
+	codeTokenResponse, fetchTokenErr := core.FetchTokenByAuthorizationCodeContext(logtoClient.ctx, logtoClient.httpClient, &core.FetchTokenByAuthorizationCodeOptions{
 		TokenEndpoint: oidcConfig.TokenEndpoint,
 		Code:          code,
 		CodeVerifier:  signInSession.CodeVerifier,

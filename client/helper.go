@@ -13,7 +13,7 @@ func (logtoClient *LogtoClient) fetchOidcConfig() (core.OidcConfigResponse, erro
 	if constructEndpointErr != nil {
 		return core.OidcConfigResponse{}, constructEndpointErr
 	}
-	return core.FetchOidcConfig(logtoClient.httpClient, discoveryEndpoint)
+	return core.FetchOidcConfigContext(logtoClient.ctx, logtoClient.httpClient, discoveryEndpoint)
 }
 
 func (logtoClient *LogtoClient) loadAccessTokenMap() {
@@ -40,7 +40,7 @@ func (logtoClient *LogtoClient) persistAccessTokenMap() {
 }
 
 func (logtoClient *LogtoClient) createRemoteJwks(jwksUri string) (*jose.JSONWebKeySet, error) {
-	jwksResponse, fetchJwksErr := core.FetchJwks(logtoClient.httpClient, jwksUri)
+	jwksResponse, fetchJwksErr := core.FetchJwksContext(logtoClient.ctx, logtoClient.httpClient, jwksUri)
 	if fetchJwksErr != nil {
 		return nil, fetchJwksErr
 	}

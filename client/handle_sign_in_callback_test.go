@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -32,8 +33,8 @@ func TestHandleSignInCallbackShouldHandleCallbackCorrectly(t *testing.T) {
 	defer patchesForVerifyAndParseCodeFromCallbackUri.Reset()
 
 	patchesForFetchTokenByAuthorizationCode := gomonkey.ApplyFunc(
-		core.FetchTokenByAuthorizationCode,
-		func(client *http.Client, options *core.FetchTokenByAuthorizationCodeOptions) (core.CodeTokenResponse, error) {
+		core.FetchTokenByAuthorizationCodeContext,
+		func(ctx context.Context, client *http.Client, options *core.FetchTokenByAuthorizationCodeOptions) (core.CodeTokenResponse, error) {
 			return testCodeTokenResponse, nil
 		},
 	)
@@ -96,8 +97,8 @@ func TestHandleSignInCallbackShouldUseBaseUrlToConstructCallbackUriWhenBaseUrlIs
 
 	codeUsedToFetchToken := ""
 	patchesForFetchTokenByAuthorizationCode := gomonkey.ApplyFunc(
-		core.FetchTokenByAuthorizationCode,
-		func(client *http.Client, options *core.FetchTokenByAuthorizationCodeOptions) (core.CodeTokenResponse, error) {
+		core.FetchTokenByAuthorizationCodeContext,
+		func(ctx context.Context, client *http.Client, options *core.FetchTokenByAuthorizationCodeOptions) (core.CodeTokenResponse, error) {
 			codeUsedToFetchToken = options.Code
 			return testCodeTokenResponse, nil
 		},
