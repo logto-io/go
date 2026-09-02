@@ -10,7 +10,7 @@ import (
 	"github.com/go-jose/go-jose/v4/jwt"
 )
 
-func generateTestTokenBySigningKey(keyId string, signingKey jose.SigningKey, idTokenClaims IdTokenClaims) (string, error) {
+func generateTestTokenBySigningKey(keyId string, signingKey jose.SigningKey, claims any) (string, error) {
 	signingKeyOptions := jose.SignerOptions{}
 	signingKeyOptions.WithType("JWT")
 	signingKeyOptions.WithHeader("kid", keyId)
@@ -22,7 +22,7 @@ func generateTestTokenBySigningKey(keyId string, signingKey jose.SigningKey, idT
 
 	builder := jwt.Signed(rsaSigner)
 
-	token, buildTokenError := builder.Claims(idTokenClaims).Serialize()
+	token, buildTokenError := builder.Claims(claims).Serialize()
 
 	if buildTokenError != nil {
 		return "", buildTokenError
@@ -75,7 +75,7 @@ func generateEcdsaSigningKeyAndJwks(signingKeyId string) (jose.SigningKey, jose.
 }
 
 func generateTestTokenAndCorrespondJwks(
-	idTokenClaims IdTokenClaims,
+	claims any,
 	signingKeyAndJwksGenerator func(string) (jose.SigningKey, jose.JSONWebKeySet, error),
 ) (string, jose.JSONWebKeySet, error) {
 	signingKeyId := "test-signing-key-id"
@@ -84,7 +84,7 @@ func generateTestTokenAndCorrespondJwks(
 		return "", jose.JSONWebKeySet{}, generateKeyError
 	}
 
-	token, generateTokenError := generateTestTokenBySigningKey(signingKeyId, signingKey, idTokenClaims)
+	token, generateTokenError := generateTestTokenBySigningKey(signingKeyId, signingKey, claims)
 	if generateTokenError != nil {
 		return "", jose.JSONWebKeySet{}, generateTokenError
 	}
@@ -92,10 +92,10 @@ func generateTestTokenAndCorrespondJwks(
 	return token, jwks, nil
 }
 
-func generateRsaSigningTestTokenAndCorrespondJwks(idTokenClaims IdTokenClaims) (string, jose.JSONWebKeySet, error) {
-	return generateTestTokenAndCorrespondJwks(idTokenClaims, generateRsaSigningKeyAndJwks)
+func generateRsaSigningTestTokenAndCorrespondJwks(claims any) (string, jose.JSONWebKeySet, error) {
+	return generateTestTokenAndCorrespondJwks(claims, generateRsaSigningKeyAndJwks)
 }
 
-func generateEcdsaSigningTestTokenAndCorrespondJwks(idTokenClaims IdTokenClaims) (string, jose.JSONWebKeySet, error) {
-	return generateTestTokenAndCorrespondJwks(idTokenClaims, generateEcdsaSigningKeyAndJwks)
+func generateEcdsaSigningTestTokenAndCorrespondJwks(claims any) (string, jose.JSONWebKeySet, error) {
+	return generateTestTokenAndCorrespondJwks(claims, generateEcdsaSigningKeyAndJwks)
 }
