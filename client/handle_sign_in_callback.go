@@ -16,7 +16,15 @@ func (logtoClient *LogtoClient) HandleSignInCallback(request *http.Request) erro
 		return parseSignInSessionErr
 	}
 
-	callbackUri := GetOriginRequestUrl(request)
+	// The scheme and host inferred from the incoming request may not match the
+	// public address when the application runs behind reverse proxies, so prefer
+	// the configured BaseUrl to construct the callback URI.
+	var callbackUri string
+	if logtoClient.logtoConfig.BaseUrl != "" {
+		callbackUri = logtoClient.logtoConfig.BaseUrl + request.RequestURI
+	} else {
+		callbackUri = GetOriginRequestUrl(request)
+	}
 	code, retrieveCodeErr := core.VerifyAndParseCodeFromCallbackUri(callbackUri, signInSession.RedirectUri, signInSession.State)
 	if retrieveCodeErr != nil {
 		return retrieveCodeErr
