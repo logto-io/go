@@ -88,7 +88,8 @@ func main() {
 		idTokenClaims, err := logtoClient.GetIdTokenClaims()
 
 		if err != nil {
-			ctx.String(http.StatusOK, err.Error())
+			ctx.String(http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		ctx.JSON(http.StatusOK, idTokenClaims)
