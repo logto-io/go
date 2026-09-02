@@ -1,12 +1,20 @@
 package core
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // FetchUserInfoWithClient fetches user info using a custom HTTP client.
 // This function allows you to use a custom HTTP client for observability,
 // tracing, or other custom configurations.
 func FetchUserInfoWithClient(client *http.Client, userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
-	request, createRequestErr := http.NewRequest("GET", userInfoEndpoint, nil)
+	return FetchUserInfoContext(context.Background(), client, userInfoEndpoint, accessToken)
+}
+
+// FetchUserInfoContext is like FetchUserInfoWithClient but binds the request to ctx.
+func FetchUserInfoContext(ctx context.Context, client *http.Client, userInfoEndpoint, accessToken string) (UserInfoResponse, error) {
+	request, createRequestErr := http.NewRequestWithContext(ctx, "GET", userInfoEndpoint, nil)
 
 	if createRequestErr != nil {
 		return UserInfoResponse{}, createRequestErr

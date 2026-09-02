@@ -1,8 +1,11 @@
 package client
 
 import (
+	"context"
 	"errors"
+	"io"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -66,8 +69,8 @@ func TestGetAccessTokenShouldReturnNotAuthenticatedErrWhenRefreshTokenIsRejected
 	}
 
 	patchesForFetchTokenByRefreshToken := gomonkey.ApplyFunc(
-		core.FetchTokenByRefreshToken,
-		func(client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
+		core.FetchTokenByRefreshTokenContext,
+		func(ctx context.Context, client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
 			return core.RefreshTokenResponse{}, testResponseError
 		},
 	)
@@ -105,8 +108,8 @@ func TestGetAccessTokenShouldPropagateOtherResponseErrorsAsIs(t *testing.T) {
 	}
 
 	patchesForFetchTokenByRefreshToken := gomonkey.ApplyFunc(
-		core.FetchTokenByRefreshToken,
-		func(client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
+		core.FetchTokenByRefreshTokenContext,
+		func(ctx context.Context, client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
 			return core.RefreshTokenResponse{}, testResponseError
 		},
 	)
@@ -153,8 +156,8 @@ func TestGetAccessTokenShouldReturnFetchedAccessTokenAndUpdateLocalAccessTokenIf
 	defer patchesForCreateRemoteJwks.Reset()
 
 	patchesForFetchTokenByRefreshToken := gomonkey.ApplyFunc(
-		core.FetchTokenByRefreshToken,
-		func(client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
+		core.FetchTokenByRefreshTokenContext,
+		func(ctx context.Context, client *http.Client, options *core.FetchTokenByRefreshTokenOptions) (core.RefreshTokenResponse, error) {
 			return testRefreshTokenResponse, nil
 		},
 	)
@@ -258,7 +261,7 @@ func TestFetchUserInfoShouldReturnCorrectUserInfoResponse(t *testing.T) {
 	})
 	defer patchesForGetAccessToken.Reset()
 
-	patchesCoreFetchUserInfo := gomonkey.ApplyFunc(core.FetchUserInfoWithClient, func(client *http.Client, userInfoEndpoint, accessToken string) (core.UserInfoResponse, error) {
+	patchesCoreFetchUserInfo := gomonkey.ApplyFunc(core.FetchUserInfoContext, func(ctx context.Context, client *http.Client, userInfoEndpoint, accessToken string) (core.UserInfoResponse, error) {
 		return testUserInfoResponse, nil
 	})
 	defer patchesCoreFetchUserInfo.Reset()
@@ -412,4 +415,56 @@ func TestLogtoClientShouldUseCustomHttpClientForFetchUserInfo(t *testing.T) {
 	// This test verifies that the LogtoClient is configured with the custom HTTP client
 	// The actual FetchUserInfo will use this client when making HTTP requests
 	assert.NotNil(t, logtoClient.httpClient)
+}
+
+type roundTripperFunc func(request *http.Request) (*http.Response, error)
+
+func (roundTrip roundTripperFunc) RoundTrip(request *http.Request) (*http.Response, error) {
+	return roundTrip(request)
+}
+
+type testContextKey struct{}
+
+func TestNewLogtoClientShouldUseBackgroundContextWhenNoOptionsProvided(t *testing.T) {
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{})
+
+	assert.Equal(t, context.Background(), logtoClient.ctx)
+}
+
+func TestNewLogtoClientShouldUseCustomContextWhenWithContextOptionProvided(t *testing.T) {
+	ctx := context.WithValue(context.Background(), testContextKey{}, "value")
+
+	logtoClient := NewLogtoClient(&LogtoConfig{}, &TestStorage{}, WithContext(ctx))
+
+	assert.Equal(t, ctx, logtoClient.ctx)
+}
+
+func TestLogtoClientShouldBindContextToRequestsSentToLogto(t *testing.T) {
+	ctx := context.WithValue(context.Background(), testContextKey{}, "value")
+
+	var requestContext context.Context
+	httpClient := &http.Client{
+		Transport: roundTripperFunc(func(request *http.Request) (*http.Response, error) {
+			requestContext = request.Context()
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Header:     http.Header{},
+				Body:       io.NopCloser(strings.NewReader(`{"authorization_endpoint":"https://example.com/oidc/auth"}`)),
+			}, nil
+		}),
+	}
+
+	logtoClient := NewLogtoClient(
+		&LogtoConfig{Endpoint: "https://example.com"},
+		&TestStorage{data: map[string]string{}},
+		WithHttpClient(httpClient),
+		WithContext(ctx),
+	)
+
+	_, signInErr := logtoClient.SignInWithRedirectUri("https://my-app.com/sign-in-callback")
+	assert.Nil(t, signInErr)
+
+	if assert.NotNil(t, requestContext) {
+		assert.Equal(t, "value", requestContext.Value(testContextKey{}))
+	}
 }

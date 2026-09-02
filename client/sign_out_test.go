@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -23,7 +24,7 @@ func TestSignOutShouldSignOutUserSuccessfully(t *testing.T) {
 	})
 	defer patchesForFetchOidcConfig.Reset()
 
-	patchesForRevoke := gomonkey.ApplyFunc(core.Revoke, func(client *http.Client, options *core.RevocationOptions) error {
+	patchesForRevoke := gomonkey.ApplyFunc(core.RevokeContext, func(ctx context.Context, client *http.Client, options *core.RevocationOptions) error {
 		return nil
 	})
 	defer patchesForRevoke.Reset()

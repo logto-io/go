@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -42,11 +43,21 @@ func WithHttpClient(client *http.Client) LogtoClientOption {
 	}
 }
 
+// WithContext binds ctx to every request the LogtoClient sends to Logto, so that
+// cancellation, deadlines, and tracing information propagate to those requests.
+// A LogtoClient is scoped to a single incoming request, so pass that request's context.
+func WithContext(ctx context.Context) LogtoClientOption {
+	return func(c *LogtoClient) {
+		c.ctx = ctx
+	}
+}
+
 type LogtoClient struct {
 	httpClient     *http.Client
 	logtoConfig    *LogtoConfig
 	storage        Storage
 	accessTokenMap map[string]AccessToken
+	ctx            context.Context
 }
 
 func NewLogtoClient(config *LogtoConfig, storage Storage, opts ...LogtoClientOption) *LogtoClient {
@@ -56,6 +67,7 @@ func NewLogtoClient(config *LogtoConfig, storage Storage, opts ...LogtoClientOpt
 		logtoConfig:    config,
 		storage:        storage,
 		accessTokenMap: make(map[string]AccessToken),
+		ctx:            context.Background(),
 	}
 
 	// Apply options
@@ -139,7 +151,7 @@ func (logtoClient *LogtoClient) GetAccessTokenWithOptions(options GetAccessToken
 		return AccessToken{}, fetchOidcConfigErr
 	}
 
-	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshToken(logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
+	refreshedToken, refreshTokenErr := core.FetchTokenByRefreshTokenContext(logtoClient.ctx, logtoClient.httpClient, &core.FetchTokenByRefreshTokenOptions{
 		TokenEndpoint:  oidcConfig.TokenEndpoint,
 		ClientId:       logtoClient.logtoConfig.AppId,
 		ClientSecret:   logtoClient.logtoConfig.AppSecret,
@@ -258,5 +270,5 @@ func (logtoClient *LogtoClient) FetchUserInfo() (core.UserInfoResponse, error) {
 		return core.UserInfoResponse{}, getAccessTokenErr
 	}
 
-	return core.FetchUserInfoWithClient(logtoClient.httpClient, oidcConfig.UserinfoEndpoint, accessToken.Token)
+	return core.FetchUserInfoContext(logtoClient.ctx, logtoClient.httpClient, oidcConfig.UserinfoEndpoint, accessToken.Token)
 }

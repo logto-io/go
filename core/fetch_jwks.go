@@ -1,13 +1,27 @@
 package core
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 type JwksResponse struct {
 	Keys []map[string]string `json:"keys"`
 }
 
 func FetchJwks(client *http.Client, jwksUri string) (JwksResponse, error) {
-	response, requestErr := client.Get(jwksUri)
+	return FetchJwksContext(context.Background(), client, jwksUri)
+}
+
+// FetchJwksContext is like FetchJwks but binds the request to ctx.
+func FetchJwksContext(ctx context.Context, client *http.Client, jwksUri string) (JwksResponse, error) {
+	request, createRequestErr := http.NewRequestWithContext(ctx, "GET", jwksUri, nil)
+
+	if createRequestErr != nil {
+		return JwksResponse{}, createRequestErr
+	}
+
+	response, requestErr := client.Do(request)
 
 	if requestErr != nil {
 		return JwksResponse{}, requestErr

@@ -111,6 +111,33 @@ if errors.As(err, &responseError) {
 }
 ```
 
+## Propagating request context
+
+`LogtoClient` methods such as `SignIn`, `HandleSignInCallback`, `GetAccessToken`, `FetchUserInfo`, and `SignOut` send HTTP requests to Logto. To propagate cancellation, deadlines, and tracing information from the incoming request to those calls, bind the client to the request's `context.Context` with `client.WithContext`. A `LogtoClient` is created per incoming request together with its session storage, so pass that request's context:
+
+```go
+func handler(w http.ResponseWriter, r *http.Request) {
+	logtoClient := client.NewLogtoClient(logtoConfig, storage, client.WithContext(r.Context()))
+	// ...
+}
+```
+
+In Gin, use `c.Request.Context()`.
+
+`WithContext` composes with `WithHttpClient`, which injects a custom `*http.Client`. With an OpenTelemetry-instrumented transport, the spans created for SDK requests are parented to the incoming request's span:
+
+```go
+// Reuse one instrumented HTTP client across requests.
+httpClient := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
+
+logtoClient := client.NewLogtoClient(logtoConfig, storage,
+	client.WithHttpClient(httpClient),
+	client.WithContext(r.Context()),
+)
+```
+
+Without `WithContext`, SDK requests use `context.Background()`. The `core` package offers the same capability through `Context` variants of its request functions, such as `core.FetchOidcConfigContext` and `core.FetchTokenByRefreshTokenContext`; the existing functions keep working unchanged.
+
 ## Running behind a reverse proxy
 
 By default, `HandleSignInCallback` reconstructs the callback URI from the incoming request, inferring the scheme from the TLS state (or the `X-Forwarded-Proto` header) and the host from the `Host` header.

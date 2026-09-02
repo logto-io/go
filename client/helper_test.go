@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"testing"
@@ -49,7 +50,7 @@ func TestFetchOidcConfigShouldReturnExpectedOidcConfig(t *testing.T) {
 		AuthorizationEndpoint: "testAuthorizationEndpoint",
 	}
 
-	patches := gomonkey.ApplyFunc(core.FetchOidcConfig, func(client *http.Client, endpoint string) (core.OidcConfigResponse, error) {
+	patches := gomonkey.ApplyFunc(core.FetchOidcConfigContext, func(ctx context.Context, client *http.Client, endpoint string) (core.OidcConfigResponse, error) {
 		return testOidcConfig, nil
 	})
 	defer patches.Reset()
