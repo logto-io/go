@@ -8,7 +8,7 @@ require (
 	github.com/agiledragon/gomonkey/v2 v2.14.2
 	github.com/gin-contrib/sessions v1.1.0
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-jose/go-jose/v4 v4.1.4
+	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/jarcoal/httpmock v1.4.2
 	github.com/stretchr/testify v1.12.1
 )
