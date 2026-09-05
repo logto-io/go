@@ -6,7 +6,7 @@ toolchain go1.27.1
 
 require (
 	github.com/agiledragon/gomonkey/v2 v2.14.2
-	github.com/gin-contrib/sessions v1.1.0
+	github.com/gin-contrib/sessions v1.1.1
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jose/go-jose/v4 v4.1.4
 	github.com/jarcoal/httpmock v1.4.2
